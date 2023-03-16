@@ -1,0 +1,1 @@
+cmd_net/8021q/built-in.a := rm -f net/8021q/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD net/8021q/built-in.a net/8021q/vlan_core.o net/8021q/vlan.o net/8021q/vlan_dev.o net/8021q/vlan_netlink.o net/8021q/vlanproc.o

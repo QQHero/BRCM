@@ -1,0 +1,1 @@
+cmd_virt/built-in.a := rm -f virt/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD virt/built-in.a virt/lib/built-in.a

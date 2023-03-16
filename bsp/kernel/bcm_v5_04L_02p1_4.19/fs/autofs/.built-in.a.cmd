@@ -1,0 +1,1 @@
+cmd_fs/autofs/built-in.a := rm -f fs/autofs/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD fs/autofs/built-in.a fs/autofs/init.o fs/autofs/inode.o fs/autofs/root.o fs/autofs/symlink.o fs/autofs/waitq.o fs/autofs/expire.o fs/autofs/dev-ioctl.o

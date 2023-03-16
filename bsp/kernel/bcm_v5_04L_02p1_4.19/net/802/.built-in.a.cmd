@@ -1,0 +1,1 @@
+cmd_net/802/built-in.a := rm -f net/802/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD net/802/built-in.a net/802/p8022.o net/802/psnap.o net/802/stp.o

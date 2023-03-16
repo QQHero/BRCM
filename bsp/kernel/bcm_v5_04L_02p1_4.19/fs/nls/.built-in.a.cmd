@@ -1,0 +1,1 @@
+cmd_fs/nls/built-in.a := rm -f fs/nls/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD fs/nls/built-in.a fs/nls/nls_base.o fs/nls/nls_cp437.o fs/nls/nls_iso8859-1.o

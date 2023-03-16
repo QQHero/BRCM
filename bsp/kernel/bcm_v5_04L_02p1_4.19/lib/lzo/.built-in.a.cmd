@@ -1,0 +1,1 @@
+cmd_lib/lzo/built-in.a := rm -f lib/lzo/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD lib/lzo/built-in.a lib/lzo/lzo1x_compress.o lib/lzo/lzo1x_decompress_safe.o

@@ -1,0 +1,1 @@
+cmd_drivers/net/dsa/built-in.a := rm -f drivers/net/dsa/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD drivers/net/dsa/built-in.a drivers/net/dsa/b53/built-in.a drivers/net/dsa/microchip/built-in.a drivers/net/dsa/mv88e6xxx/built-in.a

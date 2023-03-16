@@ -1,0 +1,1 @@
+cmd_drivers/leds/built-in.a := rm -f drivers/leds/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD drivers/leds/built-in.a drivers/leds/led-core.o drivers/leds/led-class.o

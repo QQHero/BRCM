@@ -1,0 +1,1 @@
+cmd_net/llc/built-in.a := rm -f net/llc/built-in.a; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-ar rcSTPD net/llc/built-in.a net/llc/llc_core.o net/llc/llc_input.o net/llc/llc_output.o
