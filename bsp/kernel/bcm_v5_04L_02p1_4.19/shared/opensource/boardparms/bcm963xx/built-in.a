@@ -1,11 +1,11 @@
 !<thin>
-//                                              492       `
-/Mline/waiyong/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/bp_funcs.o/
-/Mline/waiyong/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/boardparms_chip.o/
-/Mline/waiyong/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/pinmux_table_6756.o/
-/Mline/waiyong/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/boardparms_6756.o/
+//                                              528       `
+/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/bp_funcs.o/
+/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/boardparms_chip.o/
+/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/pinmux_table_6756.o/
+/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/boardparms/bcm963xx/boardparms_6756.o/
 
 /0              0           0     0     644     49180     `
-/117            0           0     0     644     984       `
-/241            0           0     0     644     1040      `
-/367            0           0     0     644     2216      `
+/126            0           0     0     644     984       `
+/259            0           0     0     644     1040      `
+/394            0           0     0     644     2216      `

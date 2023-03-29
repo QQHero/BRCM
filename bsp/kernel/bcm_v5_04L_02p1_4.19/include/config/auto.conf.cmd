@@ -1,32 +1,32 @@
 deps_config := \
 	bcmdrivers/opensource/bus/usb/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/button/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/sound/asoc/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/sound/codecs/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/bca_gpio/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/sotp/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/bca_pinctrl/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/reset_button/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/vregsync/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/bca_led_ctrl/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/wantypedet/Kconfig.autodetect \
+	bcmdrivers/opensource/char/mcast/Kconfig.autodetect \
+	bcmdrivers/opensource/char/cryptodev/Kconfig.autodetect \
+	bcmdrivers/opensource/char/bcmspivoice/Kconfig.autodetect \
+	bcmdrivers/opensource/char/bcm_bootstate/Kconfig.autodetect \
+	bcmdrivers/opensource/char/bcmspidev/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/voice/relay/Kconfig.autodetect \
 	bcmdrivers/opensource/misc/voice/dect/Kconfig.autodetect \
 	bcmdrivers/opensource/misc/voice/board_params/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/voice/relay/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/bca_legacy_led/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/clk/Kconfig.autodetect \
 	bcmdrivers/opensource/misc/pmc/Kconfig.autodetect \
 	bcmdrivers/opensource/misc/cpufreq/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/reset_button/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/button/Kconfig.autodetect \
 	bcmdrivers/opensource/misc/bca_extintr/Kconfig.autodetect \
-	bcmdrivers/opensource/misc/clk/Kconfig.autodetect \
-	bcmdrivers/opensource/char/bcm_bootstate/Kconfig.autodetect \
-	bcmdrivers/opensource/char/mcast/Kconfig.autodetect \
-	bcmdrivers/opensource/char/bcmspivoice/Kconfig.autodetect \
-	bcmdrivers/opensource/char/cryptodev/Kconfig.autodetect \
-	bcmdrivers/opensource/char/bcmspidev/Kconfig.autodetect \
-	bcmdrivers/broadcom/char/bcmlibs/Kconfig.autodetect \
-	bcmdrivers/broadcom/char/pon_drv/Kconfig.autodetect \
-	bcmdrivers/broadcom/char/buzzz/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/bca_gpio/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/wantypedet/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/sound/codecs/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/sound/asoc/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/vregsync/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/sotp/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/bca_legacy_led/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/bca_led_ctrl/Kconfig.autodetect \
+	bcmdrivers/opensource/misc/bca_pinctrl/Kconfig.autodetect \
 	bcmdrivers/broadcom/char/cleds/Kconfig.autodetect \
+	bcmdrivers/broadcom/char/pon_drv/Kconfig.autodetect \
+	bcmdrivers/broadcom/char/bcmlibs/Kconfig.autodetect \
+	bcmdrivers/broadcom/char/buzzz/Kconfig.autodetect \
 	bcmdrivers/broadcom/char/lport_serdes/Kconfig.autodetect \
 	bcmdrivers/Kconfig.autogen \
 	Kconfig.bcm \

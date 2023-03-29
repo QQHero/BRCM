@@ -29,8 +29,12 @@ opensource/char/plat-bcm/impl1/bcm-ca9mp-headsmp.o/
 opensource/char/plat-bcm/impl1/bcm_arm_hotplug.o/
 opensource/char/plat-bcm/impl1/bcm_i2c.o/
 broadcom/char/cleds/impl1/bcm_cleds.o/
-opensource/char/bcm_bootstate/impl1/bcm_bootstate.o/
-opensource/misc/clk/impl1/clk-bcm63xx.o/
+opensource/misc/bca_pinctrl/impl1/pinctrl-bcmbca.o/
+opensource/misc/bca_led_ctrl/impl1/bcm_bca_led_ctrl.o/
+opensource/misc/bca_led_ctrl/impl1/bcm_bca_cled_ctrl.o/
+opensource/misc/bca_led_ctrl/impl1/bcm_bca_leds.o/
+opensource/misc/bca_legacy_led/impl1/bcm_bca_legacy_leds_api.o/
+opensource/misc/bca_gpio/impl1/gpio-bcm-bca.o/
 opensource/misc/pmc/impl1/pmc_drv.o/
 opensource/misc/pmc/impl1/pmc_drv_linux.o/
 opensource/misc/pmc/impl1/pmc_drv_dt.o/
@@ -43,29 +47,25 @@ opensource/misc/pmc/impl1/pmc_wlan.o/
 opensource/misc/pmc/impl1/pmc_spu.o/
 opensource/misc/pmc/impl1/pmc_sdhci.o/
 opensource/misc/pmc/impl1/pmc_pcm.o/
-opensource/misc/bca_legacy_led/impl1/bcm_bca_legacy_leds_api.o/
-opensource/misc/bca_led_ctrl/impl1/bcm_bca_led_ctrl.o/
-opensource/misc/bca_led_ctrl/impl1/bcm_bca_cled_ctrl.o/
-opensource/misc/bca_led_ctrl/impl1/bcm_bca_leds.o/
-opensource/misc/bca_pinctrl/impl1/pinctrl-bcmbca.o/
-opensource/misc/bca_gpio/impl1/gpio-bcm-bca.o/
+opensource/misc/clk/impl1/clk-bcm63xx.o/
+opensource/char/bcm_bootstate/impl1/bcm_bootstate.o/
 opensource/bus/usb/impl1/bcm_bca_usb_ctrl.o/
 opensource/bus/usb/impl1/bcm_bca_usb_hw_6756.o/
 opensource/bus/usb/impl1/bcm_bca_usb_utils.o/
 opensource/bus/usb/impl1/bcm_bca_usb_xhci.o/
 opensource/bus/usb/impl1/bcm_bca_usb_ehci.o/
 opensource/bus/usb/impl1/bcm_bca_usb_ohci.o/
-/0              0           0     0     644     177736    `
-/46            /0           0     0     644     229812    `
-/100            0           0     0     644     156576    `
-/149            0           0     0     644     136340    `
-/200            0           0     0     644     184600    `
-/252            0           0     0     644     301332    `
-/303            0           0     0     644     176088    `
-/355            0           0     0     644     232220    `
-/407            0           0     0     644     53540     `
-/460            0           0     0     644     51856     `
-/511            0           0     0     644     125364    `
+/0              0           0     0     644     177756    `
+/46            /0           0     0     644     229828    `
+/100            0           0     0     644     156596    `
+/149            0           0     0     644     136360    `
+/200            0           0     0     644     184620    `
+/252            0           0     0     644     301348    `
+/303            0           0     0     644     176108    `
+/355            0           0     0     644     232236    `
+/407            0           0     0     644     53560     `
+/460            0           0     0     644     51864     `
+/511            0           0     0     644     125380    `
 /560            0           0     0     644     10264     `
 /606            0           0     0     644     5980      `
 /647            0           0     0     644     14876     `
@@ -84,26 +84,26 @@ opensource/bus/usb/impl1/bcm_bca_usb_ohci.o/
 /1250           0           0     0     644     1836      `
 /1300           0           0     0     644     17136     `
 /1342           0           0     0     644     7588      `
-/1381          /0           0     0     644     10880     `
-/1434           0           0     0     644     3808      `
-/1475           0           0     0     644     15504     `
-/1512          /0           0     0     644     7020      `
-/1555           0           0     0     644     9436      `
-/1595           0           0     0     644     5188      `
-/1632           0           0     0     644     12240     `
-/1671           0           0     0     644     3724      `
-/1709           0           0     0     644     2300      `
-/1746           0           0     0     644     3668      `
-/1786           0           0     0     644     3372      `
-/1824           0           0     0     644     2272      `
-/1861           0           0     0     644     2152      `
-/1900           0           0     0     644     2104      `
-/1937           0           0     0     644     7324      `
-/2001           0           0     0     644     9604      `
-/2056           0           0     0     644     12016     `
-/2112           0           0     0     644     16432     `
-/2163           0           0     0     644     10340     `
-/2215           0           0     0     644     6064      `
+/1381           0           0     0     644     10340     `
+/1433           0           0     0     644     9604      `
+/1488           0           0     0     644     12016     `
+/1544           0           0     0     644     16432     `
+/1595           0           0     0     644     7324      `
+/1659           0           0     0     644     6064      `
+/1706           0           0     0     644     15504     `
+/1743          /0           0     0     644     7020      `
+/1786           0           0     0     644     9436      `
+/1826           0           0     0     644     5188      `
+/1863           0           0     0     644     12240     `
+/1902           0           0     0     644     3724      `
+/1940           0           0     0     644     2300      `
+/1977           0           0     0     644     3668      `
+/2017           0           0     0     644     3372      `
+/2055           0           0     0     644     2272      `
+/2092           0           0     0     644     2152      `
+/2131           0           0     0     644     2104      `
+/2168           0           0     0     644     3808      `
+/2209          /0           0     0     644     10880     `
 /2262           0           0     0     644     3772      `
 /2307           0           0     0     644     2348      `
 /2355           0           0     0     644     2828      `
