@@ -1,8 +1,8 @@
-cmd_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-gcc -Wp,-MD,/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/.bcm_misc_hw_init_impl6.o.d -nostdinc -isystem /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/bin/../lib/gcc/arm-buildroot-linux-gnueabi/9.2.0/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./bcmkernel/include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Ibcmdrivers/opensource/include/bcm963xx/ -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmkernel/include -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmkernel/include/uapi -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/net/bridge -include ./include/linux/compiler_types.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -Werror-implicit-function-declaration -Werror=return-type -Wno-format-security -std=gnu89 -fno-PIE -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -Wa,-mno-warn-deprecated -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -Wno-int-in-bool-context -Wno-address-of-packed-member -O2 --param=allow-store-data-races=0 -Wframe-larger-than=2048 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -Wno-stringop-truncation -Wno-array-bounds -Wno-stringop-overflow -Wno-restrict -Wno-maybe-uninitialized -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -fmacro-prefix-map=./= -Wno-packed-not-aligned -DBCA_HNDROUTER -DBCA_CPEROUTER -Wno-array-bounds -Wno-maybe-uninitialized -DCONFIG_BCM96756 -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/include/bcm963xx -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/include/bcm963xx/pmc -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/phy -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/include/bcm963xx -I/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/broadcom/include/bcm963xx    -DKBUILD_BASENAME='"bcm_misc_hw_init_impl6"' -DKBUILD_MODNAME='"bcm_misc_hw_init_impl6"' -c -o /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.c
+cmd_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-gcc -Wp,-MD,/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/.bcm_misc_hw_init_impl6.o.d -nostdinc -isystem /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/bin/../lib/gcc/arm-buildroot-linux-gnueabi/9.2.0/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./bcmkernel/include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Ibcmdrivers/opensource/include/bcm963xx/ -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmkernel/include -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmkernel/include/uapi -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/net/bridge -include ./include/linux/compiler_types.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -Werror-implicit-function-declaration -Werror=return-type -Wno-format-security -std=gnu89 -fno-PIE -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -Wa,-mno-warn-deprecated -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -Wno-int-in-bool-context -Wno-address-of-packed-member -O2 --param=allow-store-data-races=0 -Wframe-larger-than=2048 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -Wno-stringop-truncation -Wno-array-bounds -Wno-stringop-overflow -Wno-restrict -Wno-maybe-uninitialized -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -fmacro-prefix-map=./= -Wno-packed-not-aligned -DBCA_HNDROUTER -DBCA_CPEROUTER -Wno-array-bounds -Wno-maybe-uninitialized -DCONFIG_BCM96756 -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/include/bcm963xx -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/include/bcm963xx/pmc -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/opensource/phy -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/include/bcm963xx -I/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/broadcom/include/bcm963xx    -DKBUILD_BASENAME='"bcm_misc_hw_init_impl6"' -DKBUILD_MODNAME='"bcm_misc_hw_init_impl6"' -c -o /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.c
 
-source_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.c
+source_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.c
 
-deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := \
+deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o := \
     $(wildcard include/config/bcm963178.h) \
     $(wildcard include/config/bcm947622.h) \
     $(wildcard include/config/bcm96855.h) \
@@ -31,22 +31,22 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
     $(wildcard include/config/arm64.h) \
     $(wildcard include/config/retpoline.h) \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/boardparms.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/boardparms.h \
     $(wildcard include/config/bcm96856.h) \
     $(wildcard include/config/bcm96846.h) \
     $(wildcard include/config/bp/phys/intf.h) \
     $(wildcard include/config/bcm947189.h) \
     $(wildcard include/config/new/leds.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bp_defs.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bp_defs.h \
   bcmdrivers/opensource/include/bcm963xx/bcm_map_part.h \
     $(wildcard include/config/bcm963138.h) \
     $(wildcard include/config/bcm963148.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/6756_map_part.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcmtypes.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_io_map.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/6756_map_part.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcmtypes.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_io_map.h \
     $(wildcard include/config/arm.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/8486x_map_part.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_misc_hw_init.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/8486x_map_part.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_misc_hw_init.h \
   include/linux/types.h \
     $(wildcard include/config/have/uid16.h) \
     $(wildcard include/config/uid16.h) \
@@ -67,7 +67,7 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
   include/linux/compiler_types.h \
   arch/arm/include/uapi/asm/posix_types.h \
   include/uapi/asm-generic/posix_types.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_ubus4.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_ubus4.h \
     $(wildcard include/config/bcm9.h) \
     $(wildcard include/config/bcm.h) \
     $(wildcard include/config/brcm/chip/rev.h) \
@@ -879,7 +879,7 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
     $(wildcard include/config/of/overlay.h) \
   include/linux/mod_devicetable.h \
   include/linux/property.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_hwdefs.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_hwdefs.h \
     $(wildcard include/config/brcm/qemu.h) \
     $(wildcard include/config/brcm/ikos.h) \
     $(wildcard include/config/bcm63138/sim.h) \
@@ -896,17 +896,17 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
     $(wildcard include/config/bcm/pon.h) \
     $(wildcard include/config/bcm/ddr/self/refresh/pwrsave.h) \
     $(wildcard include/config/bcm/pwrmngt/ddr/sr/api.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcmTag.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcmTag.h \
   bcmdrivers/opensource/include/bcm963xx/bcm_bca_legacy_led_api.h \
   include/linux/kconfig.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/flash_common.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/flash_common.h \
   bcmdrivers/opensource/include/bcm963xx/bcm_rsvmem.h \
     $(wildcard include/config/bcm/adsl.h) \
     $(wildcard include/config/bcm/rdpa.h) \
     $(wildcard include/config/bcm/mpm.h) \
     $(wildcard include/config/bcm/dhd/archer.h) \
     $(wildcard include/config/optee.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_otp.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_otp.h \
   bcmdrivers/opensource/include/bcm963xx/bcm_intr.h \
   include/generated/uapi/linux/version.h \
   include/linux/irq.h \
@@ -951,15 +951,15 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
   include/linux/irq_cpustat.h \
   arch/arm/include/asm/sections.h \
   include/asm-generic/sections.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/6756_intr.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/6756_intr.h \
   include/linux/cpu.h \
     $(wildcard include/config/pm/sleep/smp.h) \
     $(wildcard include/config/hotplug/smt.h) \
   include/linux/node.h \
     $(wildcard include/config/memory/hotplug/sparse.h) \
   include/linux/cpuhotplug.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_ubus4.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/include/bcm963xx/bcm_ubus4.h \
 
-/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o: $(deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o)
+/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o: $(deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o)
 
-$(deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o):
+$(deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/shared/opensource/drivers/bcm_misc_hw_init_impl6.o):

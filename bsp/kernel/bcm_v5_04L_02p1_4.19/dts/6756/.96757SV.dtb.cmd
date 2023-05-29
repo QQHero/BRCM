@@ -1,13 +1,13 @@
-cmd_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := mkdir -p /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/ ; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-gcc -E -Wp,-MD,/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.pre.tmp -nostdinc -I./scripts/dtc/include-prefixes -undef -D__DTS__ -x assembler-with-cpp -o /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.dts.tmp /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dts ; ./scripts/dtc/dtc -O dtb -o /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb -b 0 -i/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/ -i./scripts/dtc/include-prefixes -Wno-unit_address_vs_reg -Wno-unit_address_format -Wno-avoid_unnecessary_addr_size -Wno-alias_paths -Wno-graph_child_address -Wno-graph_port -Wno-simple_bus_reg -Wno-unique_unit_address -Wno-pci_device_reg  -d /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.dtc.tmp /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.dts.tmp ; cat /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.pre.tmp /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.dtc.tmp > /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d
+cmd_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := mkdir -p /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/ ; /projects/hnd/tools/bcm/crosstools-arm-gcc-9.2-linux-4.19-glibc-2.30-binutils-2.32/usr/bin/arm-buildroot-linux-gnueabi-gcc -E -Wp,-MD,/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.pre.tmp -nostdinc -I./scripts/dtc/include-prefixes -undef -D__DTS__ -x assembler-with-cpp -o /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.dts.tmp /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dts ; ./scripts/dtc/dtc -O dtb -o /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb -b 0 -i/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/ -i./scripts/dtc/include-prefixes -Wno-unit_address_vs_reg -Wno-unit_address_format -Wno-avoid_unnecessary_addr_size -Wno-alias_paths -Wno-graph_child_address -Wno-graph_port -Wno-simple_bus_reg -Wno-unique_unit_address -Wno-pci_device_reg  -d /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.dtc.tmp /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.dts.tmp ; cat /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.pre.tmp /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d.dtc.tmp > /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/.96757SV.dtb.d
 
-source_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dts
+source_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dts
 
-deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756.dtsi \
+deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb := \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756.dtsi \
     $(wildcard include/config/bcm/pdc.h) \
     $(wildcard include/config/bcm/spu.h) \
     $(wildcard include/config/bcm/pcie/hcd.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/linux_autoconf.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/linux_autoconf.h \
     $(wildcard include/config/nf/conntrack/h323.h) \
     $(wildcard include/config/netfilter/family/bridge.h) \
     $(wildcard include/config/kernel/gzip.h) \
@@ -1074,13 +1074,13 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
     $(wildcard include/config/mtd/m25p80.h) \
     $(wildcard include/config/bcm/kf/br/hooks.h) \
     $(wildcard include/config/kuser/helpers.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../boot_rsvdmem.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../boot_rsvdmem.dtsi \
     $(wildcard include/config/optee.h) \
     $(wildcard include/config/arm64.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_cortexA7_quad.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_cortexA7_quad.dtsi \
   scripts/dtc/include-prefixes/dt-bindings/interrupt-controller/arm-gic.h \
   scripts/dtc/include-prefixes/dt-bindings/interrupt-controller/irq.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../bcm_rsvdmem.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../bcm_rsvdmem.dtsi \
     $(wildcard include/config/bcm/adsl.h) \
     $(wildcard include/config/bcm/rdpa.h) \
     $(wildcard include/config/bcm/mpm.h) \
@@ -1090,40 +1090,40 @@ deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19
     $(wildcard include/config/bcm/fpm/pool/num.h) \
     $(wildcard include/config/bcm/rdpa/mcast.h) \
     $(wildcard include/config/brcm/qemu.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_clocks.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/memc.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcmbca_memc_dt_bindings.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_nand7_1.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_sdhci.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_hs_uart.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_clocks.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/memc.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcmbca_memc_dt_bindings.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_nand7_1.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_sdhci.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_hs_uart.dtsi \
     $(wildcard include/config/bcm963138.h) \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_rng200.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_pmc_3_2.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_boot_state_v2.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ctrl.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_xhci.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ehci.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ohci.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_i2c_bus.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_arm_uart.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_timer.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_wdt.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_sotp.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_pinctrl.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756-pinctrl.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_gpio.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_rng200.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_pmc_3_2.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_boot_state_v2.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ctrl.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_xhci.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ehci.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_usb_ohci.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_i2c_bus.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_arm_uart.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_timer.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_wdt.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_sotp.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_pinctrl.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756-pinctrl.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_gpio.dtsi \
   scripts/dtc/include-prefixes/dt-bindings/gpio/gpio.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_extintr.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_bca_extintr.dtsi \
   scripts/dtc/include-prefixes/../../../bcmdrivers/opensource/include/bcm963xx/bcm_bca_extintr_dt_bindings.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_hsspi.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_spinand.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_spinor.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_cled_ctrl.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_hsspi.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_spinand.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_spinor.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_cled_ctrl.dtsi \
   scripts/dtc/include-prefixes/../../../bcmdrivers/opensource/include/bcm963xx/bcm_bca_leds_dt_bindings.h \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756_leds.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_pcie_core.dtsi \
-  /home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../bcm_voice.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/6756_leds.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../ip/bcm_pcie_core.dtsi \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/../bcm_voice.dtsi \
 
-/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb: $(deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb)
+/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb: $(deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb)
 
-$(deps_/home/startlab/Broadcom/UGW6.0_HomeCoverage/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb):
+$(deps_/home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/dts/6756/96757SV.dtb):
