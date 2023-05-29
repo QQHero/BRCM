@@ -1,1 +1,1 @@
-TOP_PATH = /home/startlab/Broadcom/UGW6.0_HomeCoverage
+TOP_PATH = /home/startlab/Broadcom/HomeCoverage0524
