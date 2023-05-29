@@ -2360,6 +2360,9 @@ static struct platform_driver wl_plat_drv = {
 static int __init
 wl_module_init(void)
 {
+    printk(KERN_ALERT"----------[fyl] dump_stack start----------");
+    dump_stack();
+    printk(KERN_ALERT"----------[fyl] dump_stack stop----------");
     int error = -ENODEV;
     if (!osl_skb_audit(sizeof(wlc_pkttag_t))) {
         return 0;
