@@ -6290,7 +6290,6 @@ static int32 BCMFASTPATH
 wl_txq_xmit(wl_info_t *wl, struct sk_buff *skb)
 {
     skb->prev = NULL;
-
     /* Lock the queue as tasklet could be running at this time */
     TXQ_LOCK(wl);
 

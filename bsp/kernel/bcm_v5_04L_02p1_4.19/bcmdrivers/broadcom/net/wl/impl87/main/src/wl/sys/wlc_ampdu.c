@@ -201,6 +201,29 @@
 #include <wl_pktfwd.h>
 #endif /* BCM_PKTFWD */
 
+/* dump_flag_qqdx */
+//#include <bcmstdlib.h>
+bool dump_qqdx_flag(void) {
+    int dump_rand_flag = OSL_RAND() % 10000;
+
+	if (dump_rand_flag>=9990) {
+        /*printk("----------[fyl] dump_stack start1----------");
+        dump_stack();*/
+        printk("----------[fyl] dump_stack stop1----------(%d)1",dump_rand_flag);
+        return TRUE;
+    }
+    return FALSE;
+}
+void dump_qqdx_print(const char *cur_func) {
+    printk("----------[fyl] dump_stack start(%s)----------",cur_func);
+    dump_stack();
+    printk("----------[fyl] dump_stack stop(%s)----------",cur_func);
+}
+
+
+
+
+
 static INLINE void * __wlc_ampdu_pktq_pdeq(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu, uint8 tid);
 static INLINE void * __wlc_ampdu_pktq_pdeq_tail(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu,
     uint8 tid);
@@ -5035,6 +5058,14 @@ static bool BCMFASTPATH
 wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
                  scb_ampdu_tid_ini_t *ini, bool force)
 {
+
+/* dump_flag_qqdx */
+    bool dump_check = FALSE;
+    if (dump_qqdx_flag()){
+        dump_check = TRUE;
+    }
+
+
     struct scb *scb = scb_ampdu->scb;
     wlc_info_t *wlc = ampdu_tx->wlc;
 
@@ -5046,6 +5077,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
          /* Dispatch packets pending in d3fwd_wlif worklist to SCB queues and consider
           * entire traffic for release valuation.
           */
+        if(dump_check){
+                printk("@@@@@@@@@wl_pktfwd_dispatch_pktlist");
+            }
         wl_pktfwd_dispatch_pktlist(ampdu_tx->wlc->wl, SCB_WLCIFP(scb)->wlif,
             (uint8 *)&scb->ea, flowid, ini->tid);
     }
@@ -5057,6 +5091,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
         bool taf_enable = wlc_taf_in_use(taf_handle);
 
         if (taf_enable) {
+            if(dump_check){
+                printk("@@@@@@@@@taf_enable");
+            }
             bool finished = wlc_taf_schedule(taf_handle, ini->tid, scb, force);
             if (finished) {
                 return TRUE;
@@ -5071,6 +5108,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
     /* Check for any blocked release of real packets */
 #ifdef WLCFP
     if (CFP_ENAB(wlc->pub) && WLC_CFP_AMPDU_PS_UPD(wlc, scb_ampdu->scb)) {
+            if(dump_check){
+                printk("@@@@@@@@@CFP_ENAB");
+            }
         return FALSE;
     }
 #endif /* WLCFP */
@@ -5078,11 +5118,17 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
     /* No evaluation to schedule packet release when scb is/will be deleted */
     if (SCB_MARKED_DEL(scb) || SCB_DEL_IN_PROGRESS(scb) ||
         wlc->block_datafifo || wlc->txfifo_detach_pending) {
+            if(dump_check){
+                printk("@@@@@@@@@SCB_MARKED_DEL");
+            }
         return FALSE;
     }
 
 #if defined(WL_PS_SCB_TXFIFO_BLK)
     if (SCB_PS_TXFIFO_BLK(scb))
+            if(dump_check){
+                printk("@@@@@@@@@SCB_PS_TXFIFO_BLK");
+            }
         return FALSE;
 #endif /* WL_PS_SCB_TXFIFO_BLK */
 
@@ -5092,6 +5138,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
      * Block the release until PQP PGI is finished.
      */
     if (!SCB_PS(scb) && wlc_apps_psq_len(wlc, scb)) {
+        if(dump_check){
+                printk("@@@@@@@@@HNDPQP");
+            }
         return FALSE;
     }
 #endif /* HNDPQP */
@@ -5101,6 +5150,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
         scb_cfp_t *scb_cfp;    /* CFP cubby */
         /* Check if CFP TCB is ini valid but don't care txc cache */
         if (wlc_cfp_tcb_is_ini_valid(wlc, scb, ini->tid, &scb_cfp)) {
+            if(dump_check){
+                printk("@@@@@@@@@wlc_cfp_tcb_is_ini_valid");
+            }
             /* 2. SCHEDULE: Schedule the release of packets for aggregation. */
             wlc_cfp_ampdu_schedule(scb_cfp, ampdu_tx, scb_ampdu, ini, force);
             return TRUE;
@@ -5108,6 +5160,9 @@ wlc_ampdu_txeval(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
     }
 #endif /* WLCFP */
 
+            if(dump_check){
+                printk("@@@@@@@@@end");
+            }
     return wlc_ampdu_txeval_action(ampdu_tx, scb_ampdu, ini, force, NULL);
 } /* wlc_ampdu_txeval */
 

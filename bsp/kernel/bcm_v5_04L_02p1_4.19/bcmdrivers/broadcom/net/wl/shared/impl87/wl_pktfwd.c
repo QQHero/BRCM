@@ -3436,7 +3436,7 @@ wl_pktfwd_pktlist_xmit(struct net_device * net_device,
                                         wl_pktfwd_pktlist->prio);
 
     if (likely(cfp_tx_enabled)) {
-
+    	
         wl_pktfwd->stats.txf_cfp_pkts += wl_pktfwd_pktlist->len;
         PKTCNTR_INC(wl->wlc, PKTCNTR_WLPF_PKTLIST_CFP, wl_pktfwd_pktlist->len); 
 
