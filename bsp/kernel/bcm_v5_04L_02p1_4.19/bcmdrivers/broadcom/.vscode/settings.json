@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.gh": "c",
+        "chrono": "c",
+        "algorithm": "c"
+    }
+}

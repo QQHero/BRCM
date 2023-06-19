@@ -320,6 +320,65 @@ wl_pktfwd_t wl_pktfwd_g =
  */
 #define WL_PKTFWD_SUPPORTED(unit)   ((unit) < WL_PKTFWD_RADIOS)
 
+/* dump_flag_qqdx */
+static uint32 time_last = 0;
+bool dump_qqdx_1s_flag(void) {
+    uint32 time_cur = OSL_SYSUPTIME();
+
+	if (time_cur>=time_last+1000) {
+        time_last = time_cur;
+        int time_differ = time_cur - time_last;
+        printk("----------[fyl] dump_stack start1----------(%d)1",time_differ);
+        //dump_stack();
+        //printk("----------[fyl] dump_stack stop1----------(%d)1",time_differ);
+        return TRUE;
+    }
+    return FALSE;
+}
+void pktlist_every_len_sum(struct pktlist * pktlist, unsigned int * len_sum,unsigned int * data_len_sum,int * skbnum_count) {
+    // 定义一个指针变量skb，指向数据包列表的头部
+    struct sk_buff * skb = (struct sk_buff *)pktlist->head;
+    // 定义一个变量count，用于计数
+    *data_len_sum = 0;
+    *len_sum = 0;
+    *skbnum_count = 0;
+    // 当skb不为空时，循环执行以下操作
+    if (skb->len>10000000){
+        *skbnum_count+=1;
+        skb = PKTLIST_PKT_SLL(skb, SKBUFF_PTR);
+    }
+    if(skb == (struct sk_buff *)pktlist->tail){
+        *skbnum_count+=1;
+        *data_len_sum += skb->data_len;
+        *len_sum += skb->len;
+        return;
+    }
+
+    while (skb != (struct sk_buff *)pktlist->tail) {
+        // 打印skb的大小
+        *skbnum_count+=1;
+        *data_len_sum += skb->data_len;
+        *len_sum += skb->len;
+
+        // 将skb指向下一个数据包
+        //skb = (struct sk_buff *)skb->prev;
+        //skb = PKTLINK(skb);
+        skb = PKTLIST_PKT_SLL(skb, SKBUFF_PTR);
+        if(skb == (struct sk_buff *)pktlist->tail){
+            *skbnum_count+=1;
+            *data_len_sum += skb->data_len;
+            *len_sum += skb->len;
+            return;
+        }
+    }
+}
+static long long int qq_pktnum_sum = 0;//一段时间内pktlist的包数量累加
+static long long int qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY = 0;//调用次数累加
+static long long int qq_loop_time_sum = 0;//循环次数累加
+static unsigned int qq_pktsize_datalen_sum = 0;//一段时间内pktlist的包大小累加skb->data_len
+static unsigned int qq_pktsize_len_sum = 0;//一段时间内pktlist的包大小累加skb->len
+static unsigned int qq_curlist_skbnum_count_sum = 0;//一段时间内便利pktlist链表的skb个数累加
+
 /** Global stats for updates to "slow" path counters */
 wl_pktfwd_stats_t * wl_pktfwd_stats_gp = &wl_pktfwd_g.stats; /* extern */
 
@@ -3523,6 +3582,28 @@ wl_pktfwd_d3fwd_wlif_xmit(wl_info_t * wl, d3fwd_wlif_t * d3fwd_wlif)
 
     /* if (!wl->pub->up) { simply free up all pktlists in PI's work lists? } */
 
+    qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY++;
+    bool dump_check = FALSE;
+    if (dump_qqdx_1s_flag()){
+        dump_check = TRUE;
+        uint32 qq_time = OSL_SYSUPTIME();
+
+        printk("@@@@@@@@@wl_pktfwd_d3fwd_wlif_xmit::::::::::::::",);
+        printk("@@@@@@@@@qq_time:(%d)",qq_time );
+        printk("@@@@@@@@@qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY(%lld)",(long long)qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY);
+        printk("@@@@@@@@@qq_loop_time_sum:(%lld)",(long long)qq_loop_time_sum);
+        printk("@@@@@@@@@qq_pktnum_sum(%lld)",(long long)qq_pktnum_sum);
+        printk("@@@@@@@@@qq_pktsize_datalen_sum(%u)",qq_pktsize_datalen_sum);
+        printk("@@@@@@@@@qq_pktsize_len_sum(%u)",qq_pktsize_len_sum);
+        printk("@@@@@@@@@qq_curlist_skbnum_count_sum(%lld)",(long long)qq_curlist_skbnum_count_sum);
+
+        qq_pktnum_sum = 0;
+        qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY = 0;
+        qq_loop_time_sum = 0;
+        qq_pktsize_datalen_sum = 0;
+        qq_pktsize_len_sum = 0;
+        qq_curlist_skbnum_count_sum = 0;
+    }
 wl_pktfwd_dnstream_pktlist_dispatch_continue:
 
     PKTLIST_LOCK(pktlist_context);  // ++++++++++++++++++++++++++++++++++++++++
@@ -3572,6 +3653,22 @@ wl_pktfwd_dnstream_next_prio_continue:
     wl_pktfwd_pktlist.prio = prio;
     wl_pktfwd_pktlist.flowid = WL_FWDID2LUTID(pktlist_elem->pktlist.dest);
 
+    //qqdx
+    qq_pktnum_sum += wl_pktfwd_pktlist.len;
+    qq_loop_time_sum++;
+    unsigned int qq_curlist_len;
+    unsigned int qq_curlist_datalen;
+    unsigned int qq_curlist_skbnum_count;
+
+    pktlist_every_len_sum(&pktlist_elem->pktlist, &qq_curlist_len, &qq_curlist_datalen,&qq_curlist_skbnum_count);
+    qq_pktsize_datalen_sum += qq_curlist_datalen;
+    qq_pktsize_len_sum += qq_curlist_len;
+    qq_curlist_skbnum_count_sum += qq_curlist_skbnum_count;
+
+    //printk("@@@@@@@@@wl_pktfwd_pktlist.len(%d)",wl_pktfwd_pktlist.len);
+    //接下来记录每次进来列表的包大小之和，bytes
+    
+    
     PKTLIST_RESET(&pktlist_elem->pktlist); /* len = 0U, key.v16 = ~0 */
 
     dll_delete(&pktlist_elem->node);
