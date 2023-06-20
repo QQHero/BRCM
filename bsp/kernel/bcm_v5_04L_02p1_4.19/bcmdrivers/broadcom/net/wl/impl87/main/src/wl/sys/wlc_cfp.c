@@ -122,6 +122,19 @@
 #endif /* STS_XFER_PHYRXS */
 #include <wlc_apps.h>
 
+
+/* dump_qqdx */
+extern void pktlist_every_len_sum(struct sk_buff * pktlist_head, struct sk_buff * pktlist_tail, \
+		unsigned int * len_sum,unsigned int * data_len_sum,int * skbnum_count);
+extern unsigned int qq_print_token;//令牌，本文件中每次调用均减一。
+static long long int qq_pktnum_sum = 0;//一段时间内pktlist的包数量累加
+static long long int qq_wlc_cfp_tx_sendup_NO_REENTRANCY = 0;//调用次数累加
+static long long int qq_loop_time_sum = 0;//循环次数累加
+static unsigned int qq_pktsize_datalen_sum = 0;//一段时间内pktlist的包大小累加skb->data_len
+static unsigned int qq_pktsize_len_sum = 0;//一段时间内pktlist的包大小累加skb->len
+static unsigned int qq_curlist_skbnum_count_sum = 0;//一段时间内便利pktlist链表的skb个数累加
+
+
 /**
  * XXX NIC Mode
  *
@@ -2151,6 +2164,46 @@ wlc_cfp_tx_sendup(int cfp_unit, uint16 flowid, uint8 prio,
 
 	WLC_CFP_TX_TRACE((WLC_CFPMOD_FMT " pktlist[ h=0x%p t=0x%p l=%u ]\n",
 		WLC_CFPMOD_ARG("SENDUP"), pktlist_head, pktlist_tail, pkt_count));
+
+	qq_wlc_cfp_tx_sendup_NO_REENTRANCY++;
+
+    //qqdx
+    if (qq_print_token>0){
+        qq_print_token--;
+        uint32 qq_time = OSL_SYSUPTIME();
+
+        printk("@@@@@@@@@wlc_cfp_tx_sendup::::::::::::::");
+        printk("----------[fyl] dump_stack start2----------(%d)1",qq_time);
+        dump_stack();
+        printk("----------[fyl] dump_stack stop2----------(%d)1",qq_time);
+        printk("@@@@@@@@@qq_time:(%d)",qq_time );
+        printk("@@@@@@@@@qq_wlc_cfp_tx_sendup_NO_REENTRANCY(%lld)",(long long)qq_wlc_cfp_tx_sendup_NO_REENTRANCY);
+        printk("@@@@@@@@@qq_loop_time_sum:(%lld)",(long long)qq_loop_time_sum);
+        printk("@@@@@@@@@qq_pktnum_sum(%lld)",(long long)qq_pktnum_sum);
+        printk("@@@@@@@@@qq_pktsize_datalen_sum(%u)",qq_pktsize_datalen_sum);
+        printk("@@@@@@@@@qq_pktsize_len_sum(%u)",qq_pktsize_len_sum);
+        printk("@@@@@@@@@qq_curlist_skbnum_count_sum(%lld)",(long long)qq_curlist_skbnum_count_sum);
+
+        qq_pktnum_sum = 0;
+        qq_wlc_cfp_tx_sendup_NO_REENTRANCY = 0;
+        qq_loop_time_sum = 0;
+        qq_pktsize_datalen_sum = 0;
+        qq_pktsize_len_sum = 0;
+        qq_curlist_skbnum_count_sum = 0;
+    }
+
+    qq_pktnum_sum += pkt_count;
+    qq_loop_time_sum++;
+    unsigned int qq_curlist_len;
+    unsigned int qq_curlist_datalen;
+    unsigned int qq_curlist_skbnum_count;
+	struct sk_buff * qq_pktlist_head = (struct sk_buff *)pktlist_head;
+	struct sk_buff * qq_pktlist_tail = (struct sk_buff *)pktlist_tail;
+    pktlist_every_len_sum(qq_pktlist_head, qq_pktlist_tail, &qq_curlist_len, &qq_curlist_datalen,&qq_curlist_skbnum_count);
+    qq_pktsize_datalen_sum += qq_curlist_datalen;
+    qq_pktsize_len_sum += qq_curlist_len;
+    qq_curlist_skbnum_count_sum += qq_curlist_skbnum_count;
+
 
 	/* Enqueue entire packet list into SCB's ampdu queue, procceed to release */
 	wlc_cfp_ampdu_entry(wlc, prio, pktlist_head, pktlist_tail, pkt_count, scb_cfp);

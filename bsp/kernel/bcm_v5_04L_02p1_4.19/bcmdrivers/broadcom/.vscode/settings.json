@@ -2,6 +2,7 @@
     "files.associations": {
         "*.gh": "c",
         "chrono": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "wlc_fifo.h": "c"
     }
 }
