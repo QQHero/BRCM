@@ -873,6 +873,19 @@ static uint16 wlc_bmac_ofdm_ratetable_offset(wlc_hw_info_t *wlc_hw, uint8 rate);
 static int wlc_bmac_bmc_dump(wlc_hw_info_t *wlc_hw, struct bcmstrbuf *b);
 #endif
 
+/* dump_flag_qqdx */
+//#include <bcmstdlib.h>
+bool dump_qqdx_flag(void) {
+    int dump_rand_flag = OSL_RAND() % 10000;
+
+	if (dump_rand_flag>=9990) {
+        printk("----------[fyl] dump_stack start1----------");
+        dump_stack();
+        printk("----------[fyl] dump_stack stop1----------(%d)1",dump_rand_flag);
+        return TRUE;
+    }
+    return FALSE;
+}
 #ifdef NOT_RIGGED_UP_YET
 /* switch phymode supported on RSDB family of chips */
 static int wlc_bmac_switch_phymode(wlc_hw_info_t *wlc_hw, uint16 requested_phymode);
@@ -13301,7 +13314,10 @@ wlc_bmac_txstatus(wlc_hw_info_t *wlc_hw, bool bound, bool *fatal)
         wlc_txs_pkg8_t pkg;
         uint32 s1, s2;
         uint32 tsf_time = 0;
-
+        /* dump_flag_qqdx */
+        if(dump_qqdx_flag()){
+            printk("@@@@@@@@@ocrerev >= 5 && < 40");
+        }
         WL_TRACE(("wl%d: %s: ltrev40\n", wlc_hw->unit, __FUNCTION__));
 
         /* To avoid overhead time is read only once for the whole while loop
@@ -13378,6 +13394,11 @@ wlc_bmac_txstatus(wlc_hw_info_t *wlc_hw, bool bound, bool *fatal)
         if (n >= max_tx_num)
             morepending = TRUE;
     } else {
+
+        /* dump_flag_qqdx */
+        if(dump_qqdx_flag()){
+            printk("$$$$$$$$$$$$$$corerev >= 40");
+        }
         /* corerev >= 40 */
         wlc_txs40_status_t *txs40_status = NULL;
         tx_status_mactxs_t tx_status_mactxs;    // Declared on stack

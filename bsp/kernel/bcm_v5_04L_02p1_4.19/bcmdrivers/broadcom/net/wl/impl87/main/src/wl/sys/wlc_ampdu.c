@@ -630,6 +630,50 @@ typedef struct wlc_ampdu_cnt {
 #endif /* WLCNT */
 } wlc_ampdu_tx_cnt_t;
 
+/* dump_flag_qqdx */
+static uint32 time_last = 0;
+bool dump_qqdx_1s_flag(void) {
+    uint32 time_cur = OSL_SYSUPTIME();
+
+	if (time_cur>=time_last+1000) {
+        time_last = time_cur;
+        //int time_differ = time_cur - time_last;
+        //printk("----------[fyl] dump_stack start1----------(%d)1",time_differ);
+        //dump_stack();
+        //printk("----------[fyl] dump_stack stop1----------(%d)1",time_differ);
+        return TRUE;
+    }
+    return FALSE;
+}
+void qq_print_array(int arr[], int n){
+    // 用一个循环来遍历数组
+    printk(KERN_INFO "Start print array:");
+    for (int i = 0; i < n-1; i++){
+        // 打印每个元素，后面加一个空格
+        printk(KERN_INFO "%d ", arr[i]);
+        if((arr[i]==0) && (arr[i+1]==0)){
+            break;
+        }
+    }
+    // 打印一个换行符
+    printk(KERN_INFO "\n");
+}
+// 自定义函数：将无符号整数转换为二进制字符串
+void print_binary(int32 num) {
+    char binary_str[33]; // 存储32位二进制字符串和末尾的'\0'
+    binary_str[32] = '\0';
+
+    for (int i = 31; i >= 0; i--) {
+        binary_str[i] = (num & 1) ? '1' : '0'; // 判断最低位是否为1，然后将对应的字符存入字符串
+        num >>= 1; // 右移一位，处理下一位
+    }
+    printk(KERN_INFO "%s\n", binary_str);
+}
+
+static int qq_ackpktnum_sum = 0;//一段时间内ACK的包数量累加
+static int qq_ackpktfail_sum = 0;//一段时间内pktlist失败的包数量累加
+static int qq_ackpktsucc_sum = 0;//一段时间内pktlist成功的包数量累加
+
 #ifdef AMPDU_NON_AQM
 /**
  * structure to hold tx fifo information and pre-loading state counters specific to tx underflows of
@@ -9344,6 +9388,33 @@ wlc_ampdu_dotxstatus_aqm_complete(ampdu_tx_info_t *ampdu_tx, struct scb *scb,
      * body.
      */
 
+    /* dump_flag_qqdx */
+    int qq_cur_ackpktnum_sum = 0;//一段时间内ACK的包数量累加
+    int qq_cur_ackpktfail_sum = 0;//一段时间内pktlist失败的包数量累加
+    int qq_cur_ackpktsucc_sum = 0;//一段时间内pktlist成功的包数量累加
+    bool qq_ack_last = FALSE;//用于记录上次ACK 状态，根据该状态可以判断ack是否由1变为0或者0变为1
+    //为了尽量减少ACK结果的打印量，我在打印结果时，连续的1只会记录其连续为1的个数，连续的0只会记录其连续为1的个数的相反数
+    int qq_arr[100] = {0};//记录每次ack的结果
+    int qq_arr_index = 0;
+
+    if (dump_qqdx_1s_flag()){
+        uint32 qq_time = OSL_SYSUPTIME();
+        printk("@@@@@@@@@wlc_ampdu_dotxstatus_complete_noaqm::::::::::::::");
+        printk("@@@@@@@@@qq_time:(%d)",qq_time );
+        printk("@@@@@@@@@qq_ackpktnum_sum:(%d)",qq_ackpktnum_sum);
+        printk("@@@@@@@@@qq_ackpktfail_sum(%d)",qq_ackpktfail_sum);
+        printk("@@@@@@@@@qq_ackpktsucc_sum(%d)",qq_ackpktsucc_sum);
+        dump_stack();
+        if (D11REV_GE((wlc)->pub->corerev, 128)){
+            printk("@@@@@@@@@D11_TXFID_GET_FIFO_REV_GE128((wlc), (fid))");
+        }
+        else{
+            printk("@@@@@@@@@D11_TXFID_GET_FIFO_REV_LT128(fid)");
+        }
+        qq_ackpktnum_sum = 0;
+        qq_ackpktfail_sum = 0;
+        qq_ackpktsucc_sum = 0;
+    }
     while (TRUE) { /* loops over each tx MPDU in the caller supplied tx sts */
         bool free_mpdu = TRUE;
 
@@ -9735,6 +9806,38 @@ free_and_next:
         }
 #endif /* WLSCB_HISTO */
 
+
+        /* dump_flag_qqdx */
+        qq_cur_ackpktnum_sum++;
+        if (!was_acked) {
+            qq_cur_ackpktfail_sum++;
+        }
+        else{
+            qq_cur_ackpktsucc_sum++;
+        }
+        if((qq_cur_ackpktnum_sum==1)|| (was_acked == qq_ack_last)){
+            if(was_acked){
+                qq_arr[qq_arr_index]++;
+            }
+            else{
+                qq_arr[qq_arr_index]--;
+            }
+            qq_ack_last = was_acked;
+        }
+        else{
+            qq_ack_last = was_acked;
+            if(qq_arr_index<100){
+                qq_arr_index++;
+            }
+            if(was_acked){
+                qq_arr[qq_arr_index]=1;
+            }
+            else{
+                qq_arr[qq_arr_index]=-1;
+            }
+
+        }
+
         if (free_mpdu) {
 #if defined(WLPKTDLYSTAT) || defined(WL11K)
             /* calculate latency and packet loss statistics */
@@ -9866,6 +9969,18 @@ free_and_next:
         }
 #endif /* PKTQ_LOG */
     } /* while (TRUE) -> for each AMPDU in caller supplied txs */
+
+    /* dump_flag_qqdx */
+    printk(KERN_INFO "ack_map1:0x%08x$$tid: %u, queue, %u, frameid: %u,tot_mpdu: %u, ncons: %d"\
+            ,tid, queue, txs->frameid,txs->status.mactxs->ack_map1,tot_mpdu, ncons);
+    print_binary(txs->status.mactxs->ack_map1);
+    printk(KERN_INFO "ack_map2:0x%08x$$tid: %u, queue, %u, frameid: %u,tot_mpdu: %u, ncons: %d"\
+            ,tid, queue, txs->frameid,txs->status.mactxs->ack_map2,tot_mpdu, ncons);
+    print_binary(txs->status.mactxs->ack_map2);
+    qq_print_array(qq_arr, 100);
+    qq_ackpktnum_sum += qq_cur_ackpktnum_sum;//一段时间内pktlist包数量累加
+    qq_ackpktfail_sum += qq_cur_ackpktfail_sum;//一段时间内pktlist失败的包数量累加
+    qq_ackpktsucc_sum += qq_cur_ackpktsucc_sum;//一段时间内pktlist成功的包数量累加
 
 #ifdef WLTAF
     wlc_taf_txpkt_status(wlc->taf_handle, scb, tid, TAF_PARAM(tot_mpdu),
@@ -10567,7 +10682,7 @@ wlc_ampdu_dotxstatus_complete_noaqm(ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
     uint16 seq, start_seq = 0, bindex, indx, mcl;
     uint8 mcs = 0;
     bool is_sgi = FALSE, is40 = FALSE;
-    bool ba_recd = FALSE, ack_recd = FALSE, send_bar = FALSE;
+    bool ba_recd = FALSE, was_acked = FALSE, send_bar = FALSE;
     uint8 suc_mpdu = 0, tot_mpdu = 0;
     uint supr_status;
     bool update_rate = TRUE, retry = TRUE;
@@ -10984,7 +11099,7 @@ wlc_ampdu_dotxstatus_complete_noaqm(ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
             ASSERT(isset(non_aqm->ackpending, indx));
         }
 
-        ack_recd = FALSE;
+        was_acked = FALSE;
         if (ba_recd || AMPDU_MAC_ENAB(wlc->pub)) {
             if (AMPDU_MAC_ENAB(wlc->pub))
                 /* use position bitmap */
@@ -11028,7 +11143,7 @@ wlc_ampdu_dotxstatus_complete_noaqm(ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
                     wlc_tx_monitor(wlc, (d11txhdr_t *)txh, txs, p, NULL);
 #endif /* WLTXMONITOR */
                 pkt_freed = TRUE;
-                ack_recd = TRUE;
+                was_acked = TRUE;
 #ifdef PKTQ_LOG
                 WLCNTCONDINCR(prec_cnt, prec_cnt->acked);
                 WLCNTCONDINCR(actq_cnt, actq_cnt->acked);
@@ -11044,7 +11159,7 @@ wlc_ampdu_dotxstatus_complete_noaqm(ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
             }
         }
         /* either retransmit or send bar if ack not recd */
-        if (!ack_recd) {
+        if (!was_acked) {
             bool free_pkt = FALSE;
             bool relist = FALSE;
 
@@ -11199,7 +11314,7 @@ wlc_ampdu_dotxstatus_complete_noaqm(ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
         }
 #if defined(BCMDBG) || defined(WLTEST)
         /* tot_mpdu may exceeds AMPDU_MAX_MPDU if doing ucode agg */
-        if (AMPDU_HOST_ENAB(wlc->pub) && ba_recd && !ack_recd)
+        if (AMPDU_HOST_ENAB(wlc->pub) && ba_recd && !was_acked)
             hole[idx]++;
 #endif /* defined(BCMDBG) || defined(WLTEST) */
 
@@ -11214,8 +11329,8 @@ nextp:
         tot_mpdu++;
 #ifdef PROP_TXSTATUS
         if (PROP_TXSTATUS_ENAB(wlc->pub) && ((h->fc & htol16(FC_RETRY)) == 0)) {
-            uint8 wlfc_status = wlc_txstatus_interpret(&txs->status, ack_recd);
-            if (!ack_recd && scb &&
+            uint8 wlfc_status = wlc_txstatus_interpret(&txs->status, was_acked);
+            if (!was_acked && scb &&
                 WLFC_CONTROL_SIGNALS_TO_HOST_ENAB(wlc->pub) &&
                 (wlfc_status == WLFC_CTL_PKTFLAG_D11SUPPRESS)) {
                 wlc_suppress_sync_fsm(wlc, scb, p, TRUE);
@@ -11238,15 +11353,15 @@ nextp:
                 else
                     tr = 0;
 
-                wlc_delay_stats_upd(delay_stats, delay, tr, ack_recd);
+                wlc_delay_stats_upd(delay_stats, delay, tr, was_acked);
                 WL_AMPDU_STAT_EX_PFX(scb, "Enq %d retry %d cnt %d: acked %d delay"
                     "/min/max/sum %d %d %d %d\n", WLPKTTAG(p)->shared.enqtime,
-                    tr, delay_stats->txmpdu_cnt[tr], ack_recd, delay,
+                    tr, delay_stats->txmpdu_cnt[tr], was_acked, delay,
                     delay_stats->delay_min, delay_stats->delay_max,
                     delay_stats->delay_sum[tr]);
 #endif /* WLPKTDLYSTAT */
 #ifdef WL11K
-                if (ack_recd) {
+                if (was_acked) {
                     wlc_rrm_delay_upd(wlc, scb, tid, delay);
                 }
 #endif
