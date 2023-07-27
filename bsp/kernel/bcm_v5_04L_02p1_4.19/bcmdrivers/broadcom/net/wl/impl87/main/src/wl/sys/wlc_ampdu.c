@@ -212,6 +212,21 @@ static INLINE bool __wlc_ampdu_pktq_penq(wlc_info_t *wlc, scb_ampdu_tx_t *scb_am
 static INLINE void * __wlc_ampdu_pktq_penq_head(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu,
     uint8 tid, void *pkt);
 
+/* dump_flag_qqdx */
+struct pkt_qq {
+    uint32 tcp_seq;/* Starting sequence number */
+    uint32 ampdu_seq;/* preassigned seqnum for AMPDU */
+    uint32 packetid;/* 未知变量packetid */
+    uint32 into_hw_time;/*进入硬件队列的时间*/
+    uint32 free_time;/*传输成功被释放的时间*/
+    uint32 drop_time;/*传输失败被丢弃的时间*/
+    uint32 failed_cnt;/*发射失败次数*/
+    uint32 failed_time_list_qq[10];/*发射失败时间列表*/
+    struct pkt_qq *next;
+    
+};
+extern struct pkt_qq *pkt_qq_chain_head;
+
 #if defined(BCM_PKTFWD_FLCTL)
 static void __wlc_ampdu_update_link_credits(wlc_info_t * wlc, struct scb *scb, int prio,
     int32 credits, bool add);
@@ -9733,6 +9748,35 @@ free_and_next:
             succ_msdu += WLPKTTAG_AMSDU(p) ? amsdu_sf : 1;
             succ_mpdu++;
         }
+
+        //#if 0
+        /* dump_flag_qqdx */
+        struct pkt_qq *pkt_qq_cur = pkt_qq_chain_head;
+        //struct tcp_skb_cb *tcb = ((struct tcp_skb_cb *)&)(struct sk_buff *)p->cb[0];
+        //struct tcp_skb_cb *tcb = (struct tcp_skb_cb *)TCP_SKB_CB((struct sk_buff *)p);
+        //uint32 p_tcp_seq_cur = tcb->seq;
+        uint16 p_tcp_seq_cur = WLPKTTAG(p)->seq;
+        uint8 index = 0;
+        while(pkt_qq_cur->next != (struct pkt_qq *)NULL){
+            if(pkt_qq_cur->tcp_seq == p_tcp_seq_cur ){
+
+                if(was_acked){
+                    pkt_qq_cur->free_time = OSL_SYSUPTIME();
+                }
+                uint32 pkt_qq_cur_PHYdelay = pkt_qq_cur->free_time - pkt_qq_cur->into_hw_time;
+                if(pkt_qq_cur_PHYdelay >= 100){
+                    printk("----------[fyl] p_tcp_seq_cur----------(%d)1",p_tcp_seq_cur);
+                    printk("----------[fyl] pkt_qq_cur_PHYdelay----------(%d)1",pkt_qq_cur_PHYdelay);
+                }
+                break;
+            }
+            index++;
+            if(index>100){
+                printk(KERN_ALERT"###########index>100");
+                break;
+            }
+        }
+        //#endif
 #endif /* WLSCB_HISTO */
 
         if (free_mpdu) {

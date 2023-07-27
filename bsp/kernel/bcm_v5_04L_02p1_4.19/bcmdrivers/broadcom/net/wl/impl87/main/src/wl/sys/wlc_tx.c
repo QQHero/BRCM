@@ -324,6 +324,130 @@ typedef struct {
 #define XMESH_PORT                                          9801
 #endif
 
+/* dump_flag_qqdx */
+struct pkt_qq {
+    uint32 tcp_seq;/* Starting sequence number */
+    uint32 ampdu_seq;/* preassigned seqnum for AMPDU */
+    uint32 packetid;/* 未知变量packetid */
+    uint32 into_hw_time;/*进入硬件队列的时间*/
+    uint32 free_time;/*传输成功被释放的时间*/
+    uint32 drop_time;/*传输失败被丢弃的时间*/
+    uint32 failed_cnt;/*发射失败次数*/
+    uint32 failed_time_list_qq[10];/*发射失败时间列表*/
+    struct pkt_qq *next;
+    
+}pkt_qq_t;
+struct pkt_qq *pkt_qq_chain_head = (struct pkt_qq *)NULL;
+struct pkt_qq *pkt_qq_chain_tail = (struct pkt_qq *)NULL;
+uint8 pkt_qq_chain_len = 0;
+
+
+#if 0
+uint8 pkt_chain_list_len_qq = 100;
+struct pkt_qq pkt_chain_list_qq[pkt_chain_list_len_qq];//存储链表节点的列表
+/*在列表中添加一个新的节点，并返回节点指针*/
+struct pkt_qq *add_node(struct pkt_qq *pkt_chain_list_qq, uint8 pkt_chain_list_len_qq) {
+    static struct pkt_qq nodes[100]; /* 静态分配一个数组，用来存储节点 */
+    static int index = 0; /* 静态变量，用来记录数组下标 */
+    if (index >= 10) {
+        printf("No more space\n");
+        return NULL;
+    }   
+    nodes[index].data = data;
+    nodes[index].next = NULL;
+    return &nodes[index++]; /* 返回数组中的一个元素，并更新下标 */
+}
+
+/*在列表中删除一个新的节点，并返回节点指针*/
+//struct pkt_qq *pkt_chain_list_qq列表指针
+//uint8 pkt_chain_list_len_qq列表长度
+//bool del_first_node是否是删除第一个进入的节点
+//uint32 del_seq所要删除节点的seq取值
+struct pkt_qq *del_node(struct pkt_qq *pkt_chain_list_qq, uint8 pkt_chain_list_len_qq, bool del_first_node, uint32 del_seq) {
+    if(del_first_node){
+        for(i = 0;i<pkt_chain_list_len_qq;i++){
+
+        }
+    }
+
+    static struct pkt_qq nodes[100]; /* 静态分配一个数组，用来存储节点 */
+    static int index = 0; /* 静态变量，用来记录数组下标 */
+    if (index >= 10) {
+        printf("No more space\n");
+        return NULL;
+    }   
+    nodes[index].data = data;
+    nodes[index].next = NULL;
+    return &nodes[index++]; /* 返回数组中的一个元素，并更新下标 */
+}
+
+//########################################################
+
+/* 创建一个新的节点，并分配内存 */
+struct pkt_qq *new_node(int data) {
+    static struct pkt_qq nodes[100]; /* 静态分配一个数组，用来存储节点 */
+    static int index = 0; /* 静态变量，用来记录数组下标 */
+    if (index >= 10) {
+        printf("No more space\n");
+        return NULL;
+    }   
+    nodes[index].data = data;
+    nodes[index].next = NULL;
+    return &nodes[index++]; /* 返回数组中的一个元素，并更新下标 */
+}
+
+/* 删除一个节点，并释放内存 */
+void delete_node(struct pkt_qq **head, int data) {
+    struct pkt_qq *prev = NULL;
+    struct pkt_qq *curr = *head;
+    while (curr != NULL) {
+        if (curr->data == data) { /* 找到要删除的节点 */
+            if (prev == NULL) { /* 如果要删除的节点是头节点 */
+                *head = curr->next; /* 更新头指针 */
+            } else { /* 如果要删除的节点不是头节点 */
+                prev->next = curr->next; /* 更新前一个节点的指针 */
+            }
+            //free(curr); /* 不需要释放要删除的节点的内存，因为它是静态分配的 */
+            return; /* 结束函数 */
+        }
+        prev = curr; /* 更新前一个节点 */
+        curr = curr->next; /* 更新当前节点 */
+    }
+    printf("Node not found\n"); /* 没有找到要删除的节点 */
+}
+
+/* 使用方法示例 */
+
+int main() {
+    struct pkt_qq *head = NULL; /* 创建一个空链表 */
+
+    head = new_node(10); /* 在链表头插入一个值为10的节点 */
+    head->next = new_node(20); /* 在链表头后面插入一个值为20的节点 */
+
+    printf("Before deletion:\n"); /* 打印删除前的链表 */
+    struct pkt_qq *p = head;
+    while (p != NULL) {
+        printf("%d ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+
+    delete_node(&head, 10); /* 删除值为10的节点 */
+
+    printf("After deletion:\n"); /* 打印删除后的链表 */
+    p = head;
+    while (p != NULL) {
+    printf("%d ", p->data);
+    p = p->next;
+    }
+    printf("\n");
+
+    return 0;
+}
+
+#endif
+
+
 static int wlc_wme_wmmac_check_fixup(wlc_info_t *wlc, struct scb *scb, void *sdu);
 
 #if defined(BCMDBG)
@@ -1468,10 +1592,11 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
         wlc_print_hdrs(wlc, "BMAC TXFAST hdr", (uint8*)d11h,
             (uint8*)PKTDATA(osh, p), NULL, PKTLEN(osh, p));
 #endif /* CFP_DEBUG */
-
+        /* dump_flag_qqdx */
+        bool not_enough_flag_qq = FALSE;
         if (wlc_bmac_dma_txfast(wlc, fifo, p, commit) < 0) {
             /* the dma did not have enough room to take the pkt */
-
+            not_enough_flag_qq = TRUE;
             /* mark this hw fifo as stopped */
             __txq_swq_hw_stop_set(txq_swq);
             WLCNTINCR(stats->hw_stops);
@@ -1480,6 +1605,45 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             spktq_enq_head(spktq, p);
             break;
         }
+        //#if 0
+        if(not_enough_flag_qq == FALSE){
+                //struct tcp_skb_cb *tcb = TCP_SKB_CB((struct sk_buff *)p);
+                //pkt_qq_cur->tcp_seq = tcb->seq;
+                //pkt_qq_cur->tcp_seq = (((struct sk_buff*)p)->cb)
+                //pkt_qq_cur->ampdu_seq = ((wlc_pkttag_t *)WLPKTTAG(p))->seq;
+                //pkt_qq_cur->packetid = ((wlc_pkttag_t *)WLPKTTAG(p))->shared.packetid;
+                //pkt_qq_cur->packetid = pkttag->shared.packetid;
+                //if(pkttag->shared.packetid!=(uint32)NULL){
+                //if(pkttag->shared.enqtime!=0){
+                    //printk("1241345123512351245425849345469");
+                //}
+            struct pkt_qq *pkt_qq_cur = (struct pkt_qq *) MALLOCZ(osh, sizeof(pkt_qq_t));
+            pkt_qq_cur->into_hw_time = OSL_SYSUPTIME();
+            pkt_qq_cur->next = (struct pkt_qq *)NULL;
+                if (pkt_qq_chain_head == (struct pkt_qq *)NULL){
+                    pkt_qq_chain_head = pkt_qq_cur;
+                    pkt_qq_chain_tail = pkt_qq_cur;
+
+                }else{
+                    (*pkt_qq_chain_tail).next = pkt_qq_cur;
+                    pkt_qq_chain_tail = pkt_qq_cur;
+                }
+                
+                pkt_qq_chain_len++;
+                if(pkt_qq_chain_len>100){
+                    
+                    struct pkt_qq *pkt_qq_cur1 = pkt_qq_chain_head;
+                    pkt_qq_chain_head = pkt_qq_chain_head->next;
+                    pkt_qq_chain_len--;
+                    MFREE(osh, pkt_qq_cur1, sizeof(pkt_qq_t));
+                }
+            int dump_rand_flag = OSL_RAND() % 10000;
+            if (dump_rand_flag>=9900) {
+                printk(KERN_ALERT"###########pkt_qq_chain_len(%d)",pkt_qq_chain_len);
+            }
+        }
+        //#endif
+
 #ifdef BCM_DMA_CT
         if (BCM_DMA_CT_ENAB(wlc)) {
             prev_fifo = fifo;
