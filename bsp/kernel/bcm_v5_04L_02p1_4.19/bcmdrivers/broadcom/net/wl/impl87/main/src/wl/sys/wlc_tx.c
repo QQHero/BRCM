@@ -324,12 +324,16 @@ typedef struct {
 #define XMESH_PORT                                          9801
 #endif
 
+
+#include <wlc_qq.h>
+#if 0
 /* dump_flag_qqdx */
 struct pkt_qq {
     uint32 tcp_seq;/* Starting sequence number */
     uint32 ampdu_seq;/* preassigned seqnum for AMPDU */
     uint32 packetid;/* 未知变量packetid */
-    uint16 FrameID;//每个数据包生命周期不变的
+    uint16 FrameID;//每个数据帧生命周期不变的
+    uint16 pktSEQ;//也许每个数据包生命周期不变的
     uint32 into_hw_time;/*进入硬件队列的时间*/
     uint32 free_time;/*传输成功被释放的时间*/
     uint32 drop_time;/*传输失败被丢弃的时间*/
@@ -392,7 +396,7 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur){
 }
 void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //mutex_lock(&pkt_qq_mutex); // 加锁
-    if((pkt_qq_cur->FrameID == pkt_qq_chain_head->FrameID)&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
+    if((pkt_qq_cur->pktSEQ == pkt_qq_chain_head->pktSEQ)&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
 
         if(pkt_qq_chain_head->next == (struct pkt_qq *)NULL){//防止删除节点时出错
             MFREE(osh, pkt_qq_cur, sizeof(pkt_qq_t));
@@ -433,9 +437,10 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
 
 
 
-void ack_update_qq(uint16 curTxFrameID,bool was_acked,osl_t *osh){
+void ack_update_qq(scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *ampdu_tx, tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh){
     mutex_lock(&pkt_qq_mutex); // 加锁
-    
+    uint16 curTxFrameID = txh_info->TxFrameID;
+    uint8 tid = ini->tid;
     struct pkt_qq *pkt_qq_cur = pkt_qq_chain_head;
     uint16 index = 0;
     uint16 deleteNUM_delay = 0;
@@ -443,23 +448,43 @@ void ack_update_qq(uint16 curTxFrameID,bool was_acked,osl_t *osh){
 
         uint32 cur_time = OSL_SYSUPTIME();
         uint32 pkt_qq_cur_PHYdelay = cur_time - pkt_qq_cur->into_hw_time;
+        //if(pkt_qq_cur->pktSEQ == cur_pktSEQ ){//如果找到了这个数据包
         if(pkt_qq_cur->FrameID == htol16(curTxFrameID) ){//如果找到了这个数据包
 
+            pkt_qq_cur->pktSEQ = pkttag->seq;
             if(was_acked){//如果成功ACK 
                 pkt_qq_cur->free_time = cur_time;
                 
-                if(pkt_qq_cur_PHYdelay >= 10){//如果时延较高就打印出来
+                if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>1){//如果时延较高就打印出来
                     printk("----------[fyl] FrameID----------(%u)1",pkt_qq_cur->FrameID);
+                    printk("----------[fyl] pktSEQ----------(%u)1",pkt_qq_cur->pktSEQ);
                     printk("----------[fyl] pkt_qq_cur->failed_cnt----------(%u)",pkt_qq_cur->failed_cnt);
                     printk("----------[fyl] pkt_qq_cur_PHYdelay----------(%u)",pkt_qq_cur_PHYdelay);
                     printk("----------[fyl] pkt_qq_cur->free_time----------(%u)",pkt_qq_cur->free_time);
                     printk("----------[fyl] pkt_qq_cur->into_hw_time----------(%u)",pkt_qq_cur->into_hw_time);
+                    printk("----------[fyl] ini->tid----------(%u)",tid);
+                    printk("--[fyl] txs->status.rts_tx_cnt:txs->status.cts_tx_cnt---(%u:%u)",txs->status.rts_tx_cnt,txs->status.cts_rx_cnt);
+                    if(pkt_qq_cur->failed_cnt>0){
+                        printk("failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)",pkt_qq_cur->failed_time_list_qq[0]\
+                        ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
+                        ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
+                        ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
+                    }
                 }
                 /*删除已经ACK的数据包节点*/
                 pkt_qq_delete(pkt_qq_cur,osh);
                 break;                    
             }else{//未收到ACK则增加计数
                 index++;
+                if(pkt_qq_cur->failed_cnt>0){/*如果同时到达的，就不认为是重传*/
+                    if(pkt_qq_cur->failed_time_list_qq[pkt_qq_cur->failed_cnt-1]==cur_time){
+                        break;
+                    }
+                }
+                if(pkt_qq_cur->failed_cnt<10){
+                    pkt_qq_cur->failed_time_list_qq[pkt_qq_cur->failed_cnt] = cur_time;
+                }
+                
                 pkt_qq_cur->failed_cnt++;
                 break;
             }
@@ -487,7 +512,7 @@ void ack_update_qq(uint16 curTxFrameID,bool was_acked,osl_t *osh){
     mutex_unlock(&pkt_qq_mutex); // 解锁
 }
 
-                    
+#endif            
 
 
 
@@ -1661,7 +1686,9 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             pkt_qq_cur->next = (struct pkt_qq *)NULL;
             pkt_qq_cur->prev = (struct pkt_qq *)NULL;
             pkt_qq_cur->FrameID = htol16(TxFrameID);
+            pkt_qq_cur->pktSEQ = pkttag->seq;
             pkt_qq_cur->failed_cnt = 0;
+            pkt_qq_cur->into_hw_txop = wlc_bmac_cca_read_counter(wlc->hw, M_CCA_TXOP_L_OFFSET(wlc), M_CCA_TXOP_H_OFFSET(wlc));;
             pkt_qq_add_at_tail(pkt_qq_cur);
 
             uint32 cur_time = OSL_SYSUPTIME();
@@ -1674,7 +1701,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                 }
             }
             int dump_rand_flag = OSL_RAND() % 10000;
-            if (dump_rand_flag>=9900) {
+            if (dump_rand_flag>=9990) {
                 printk(KERN_ALERT"###########pkt_qq_chain_len(%d)",pkt_qq_chain_len);
                 printk(KERN_ALERT"###########pkt_qq_cur->into_hw_time(%u)",pkt_qq_cur->into_hw_time);
                 printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",cur_time);

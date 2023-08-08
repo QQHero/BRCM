@@ -1528,6 +1528,7 @@ deps_bcmdrivers/broadcom/net/wl/bcm96756/main/components/router/hnd_wl//../../..
   /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/net/wl/bcm96756/main/src/wl/td_proc/td_debug.h \
   /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/net/wl/bcm96756/main/src/wl/sys/wlc_lq.h \
   /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/net/wl/bcm96756/main/src/wl/sys/wlc_dfs.h \
+  /home/startlab/Broadcom/HomeCoverage0524/bsp/kernel/bcm_v5_04L_02p1_4.19/bcmdrivers/broadcom/net/wl/bcm96756/main/src/wl/sys/wlc_qq.h \
 
 bcmdrivers/broadcom/net/wl/bcm96756/main/components/router/hnd_wl//../../../../main/src/wl/sys/wlc_tx.o: $(deps_bcmdrivers/broadcom/net/wl/bcm96756/main/components/router/hnd_wl//../../../../main/src/wl/sys/wlc_tx.o)
 
