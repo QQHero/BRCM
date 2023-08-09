@@ -200,6 +200,8 @@
 #if defined(BCM_PKTFWD)
 #include <wl_pktfwd.h>
 #endif /* BCM_PKTFWD */
+/* dump_flag_qqdx */
+extern unsigned int qq_pktnum_in_dotxstatus_aqm;//一段时间内便利txq_hw_fill的pkt个数累加
 
 static INLINE void * __wlc_ampdu_pktq_pdeq(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu, uint8 tid);
 static INLINE void * __wlc_ampdu_pktq_pdeq_tail(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu,
@@ -9733,6 +9735,8 @@ free_and_next:
             succ_msdu += WLPKTTAG_AMSDU(p) ? amsdu_sf : 1;
             succ_mpdu++;
         }
+        /* dump_flag_qqdx */
+        qq_pktnum_in_dotxstatus_aqm += WLPKTTAG_AMSDU(p) ? amsdu_sf : 1;//一段时间内便利txq_hw_fill的pkt个数累加
 #endif /* WLSCB_HISTO */
 
         if (free_mpdu) {

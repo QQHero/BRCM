@@ -324,7 +324,9 @@ wl_pktfwd_t wl_pktfwd_g =
 static uint32 time_last = 0;
 bool dump_qqdx_1s_flag(void) {
     uint32 time_cur = OSL_SYSUPTIME();
-
+    if(OSL_SYSUPTIME()<0){
+        return FALSE;
+    }
 	if (time_cur>=time_last+1000) {
         time_last = time_cur;
         int time_differ = time_cur - time_last;
@@ -332,6 +334,9 @@ bool dump_qqdx_1s_flag(void) {
         //dump_stack();
         //printk("----------[fyl] dump_stack stop1----------(%d)1",time_differ);
         return TRUE;
+    }
+    if(time_last<=0){
+        time_last = 0;
     }
     return FALSE;
 }
@@ -379,6 +384,10 @@ static unsigned int qq_pktsize_datalen_sum = 0;//一段时间内pktlist的包大
 static unsigned int qq_pktsize_len_sum = 0;//一段时间内pktlist的包大小累加skb->len
 static unsigned int qq_curlist_skbnum_count_sum = 0;//一段时间内便利pktlist链表的skb个数累加
 unsigned int qq_print_token = 0;//令牌，一旦本文件中计时器到了时间，令牌加一，从而方便后续调用。
+
+
+unsigned int qq_pktnum_in_txq_hw_fill = 0;//一段时间内便利txq_hw_fill的pkt个数累加
+unsigned int qq_pktnum_in_dotxstatus_aqm = 0;//一段时间内便利txq_hw_fill的pkt个数累加
 /** Global stats for updates to "slow" path counters */
 wl_pktfwd_stats_t * wl_pktfwd_stats_gp = &wl_pktfwd_g.stats; /* extern */
 
@@ -3597,6 +3606,8 @@ wl_pktfwd_d3fwd_wlif_xmit(wl_info_t * wl, d3fwd_wlif_t * d3fwd_wlif)
         printk("@@@@@@@@@qq_pktsize_datalen_sum(%u)",qq_pktsize_datalen_sum);
         printk("@@@@@@@@@qq_pktsize_len_sum(%u)",qq_pktsize_len_sum);
         printk("@@@@@@@@@qq_curlist_skbnum_count_sum(%lld)",(long long)qq_curlist_skbnum_count_sum);
+        printk("@@@@@@@@@qq_pktnum_in_txq_hw_fill(%u)",qq_pktnum_in_txq_hw_fill);
+        printk("@@@@@@@@@qq_pktnum_in_dotxstatus_aqm(%u)",qq_pktnum_in_dotxstatus_aqm);
 
         qq_pktnum_sum = 0;
         qq_wl_pktfwd_d3fwd_wlif_xmit_NO_REENTRANCY = 0;
@@ -3604,6 +3615,8 @@ wl_pktfwd_d3fwd_wlif_xmit(wl_info_t * wl, d3fwd_wlif_t * d3fwd_wlif)
         qq_pktsize_datalen_sum = 0;
         qq_pktsize_len_sum = 0;
         qq_curlist_skbnum_count_sum = 0;
+        qq_pktnum_in_txq_hw_fill = 0;//一段时间内便利txq_hw_fill的pkt个数累加
+        qq_pktnum_in_dotxstatus_aqm = 0;//一段时间内便利txq_hw_fill的pkt个数累加
     }
 wl_pktfwd_dnstream_pktlist_dispatch_continue:
 

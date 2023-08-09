@@ -277,6 +277,8 @@ extern unsigned int tdextend_jiffies;
 #include <bcmip.h>
 #endif
 #endif /*CONFIG_TENDA_PRIVATE_WLAN*/
+/* dump_flag_qqdx */
+extern unsigned int qq_pktnum_in_txq_hw_fill ;
 
 #ifdef BCMDBG_TXSTALL
 #include <wlc_lq.h>
@@ -1468,10 +1470,13 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
         wlc_print_hdrs(wlc, "BMAC TXFAST hdr", (uint8*)d11h,
             (uint8*)PKTDATA(osh, p), NULL, PKTLEN(osh, p));
 #endif /* CFP_DEBUG */
+        /* dump_flag_qqdx */
+        bool not_enough_flag_qq = FALSE;
 
         if (wlc_bmac_dma_txfast(wlc, fifo, p, commit) < 0) {
             /* the dma did not have enough room to take the pkt */
-
+            not_enough_flag_qq = TRUE;
+        
             /* mark this hw fifo as stopped */
             __txq_swq_hw_stop_set(txq_swq);
             WLCNTINCR(stats->hw_stops);
@@ -1480,6 +1485,11 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             spktq_enq_head(spktq, p);
             break;
         }
+
+        if(not_enough_flag_qq == FALSE){
+            qq_pktnum_in_txq_hw_fill++;
+        }
+
 #ifdef BCM_DMA_CT
         if (BCM_DMA_CT_ENAB(wlc)) {
             prev_fifo = fifo;

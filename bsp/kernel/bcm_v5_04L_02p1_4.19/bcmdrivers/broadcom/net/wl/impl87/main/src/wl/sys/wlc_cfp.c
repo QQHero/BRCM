@@ -2173,10 +2173,10 @@ wlc_cfp_tx_sendup(int cfp_unit, uint16 flowid, uint8 prio,
         uint32 qq_time = OSL_SYSUPTIME();
 
         printk("@@@@@@@@@wlc_cfp_tx_sendup::::::::::::::");
-        printk("----------[fyl] dump_stack start2----------(%d)1",qq_time);
-        dump_stack();
-        printk("----------[fyl] dump_stack stop2----------(%d)1",qq_time);
-        printk("@@@@@@@@@qq_time:(%d)",qq_time );
+        //printk("----------[fyl] dump_stack start2----------(%d)1",qq_time);
+        //dump_stack();
+        //printk("----------[fyl] dump_stack stop2----------(%d)1",qq_time);
+        printk("@@@@@@@@@qq_time:(%u)",qq_time );
         printk("@@@@@@@@@qq_wlc_cfp_tx_sendup_NO_REENTRANCY(%lld)",(long long)qq_wlc_cfp_tx_sendup_NO_REENTRANCY);
         printk("@@@@@@@@@qq_loop_time_sum:(%lld)",(long long)qq_loop_time_sum);
         printk("@@@@@@@@@qq_pktnum_sum(%lld)",(long long)qq_pktnum_sum);
