@@ -1676,21 +1676,34 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
         //#if 0
         if(not_enough_flag_qq == FALSE){
 
-            mutex_lock(&pkt_qq_mutex); // 加锁
+            //mutex_lock(&pkt_qq_mutex); // 加锁
             struct pkt_qq *pkt_qq_cur = NULL;
             pkt_qq_cur = (struct pkt_qq *) MALLOCZ(osh, sizeof(pkt_qq_t));
             if(pkt_qq_cur == NULL){
                 printk("_______out of mem:::pkt_qq_chain_len(%u)",pkt_qq_chain_len);
             }
             pkt_qq_cur->into_hw_time = (uint32 )OSL_SYSUPTIME();
+            pkt_qq_cur->free_time = 0;
             pkt_qq_cur->next = (struct pkt_qq *)NULL;
             pkt_qq_cur->prev = (struct pkt_qq *)NULL;
             pkt_qq_cur->FrameID = htol16(TxFrameID);
             pkt_qq_cur->pktSEQ = pkttag->seq;
             pkt_qq_cur->failed_cnt = 0;
-            pkt_qq_cur->into_hw_txop = wlc_bmac_cca_read_counter(wlc->hw, M_CCA_TXOP_L_OFFSET(wlc), M_CCA_TXOP_H_OFFSET(wlc));;
+            pkt_qq_cur->into_hw_txop = wlc_bmac_cca_read_counter(wlc->hw, M_CCA_TXOP_L_OFFSET(wlc), M_CCA_TXOP_H_OFFSET(wlc));
+            pkt_qq_cur->airtime_self = 0;
+            pkt_qq_cur->airtime_all = 0;
+            for (int i = 0; i < CCASTATS_MAX; i++) {
+                pkt_qq_cur->ccastats_qq[i] = wlc_bmac_cca_read_counter(wlc->hw, 4 * i, (4 * i + 2));
+            }
             pkt_qq_add_at_tail(pkt_qq_cur);
-
+            pkt_qq_del_timeout_ergodic(osh);
+            int dump_rand_flag = OSL_RAND() % 10000;
+            if (dump_rand_flag>=9990) {
+                printk(KERN_ALERT"###########pkt_qq_chain_len(%d)",pkt_qq_chain_len);
+                printk(KERN_ALERT"###########pkt_qq_cur->into_hw_time(%u)",pkt_qq_cur->into_hw_time);
+                printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+            }
+            /*
             uint32 cur_time = OSL_SYSUPTIME();
             if(pkt_qq_chain_len > max_pkt_qq_chain_len){
                 bool sniffer_flag = FALSE;
@@ -1699,12 +1712,6 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                 if(pkt_qq_len_error_sniffer(osh, 4)&& !sniffer_flag){
                     printk("_______error here4");
                 }
-            }
-            int dump_rand_flag = OSL_RAND() % 10000;
-            if (dump_rand_flag>=9990) {
-                printk(KERN_ALERT"###########pkt_qq_chain_len(%d)",pkt_qq_chain_len);
-                printk(KERN_ALERT"###########pkt_qq_cur->into_hw_time(%u)",pkt_qq_cur->into_hw_time);
-                printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",cur_time);
             }
             if(pkt_qq_chain_len > (max_pkt_qq_chain_len - 66)){
                 uint16 index = 0;
@@ -1718,7 +1725,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                     uint32 cur_time = OSL_SYSUPTIME();
                     uint32 pkt_qq_cur_PHYdelay = cur_time - pkt_qq_cur->into_hw_time;
                     struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
-                    if(pkt_qq_cur_PHYdelay>pkt_qq_ddl){/*每隔一段时间删除超时的数据包节点*/
+                    if(pkt_qq_cur_PHYdelay>pkt_qq_ddl){//每隔一段时间删除超时的数据包节点
                 pkt_qq_delete(pkt_qq_cur,osh);
 
                     }
@@ -1729,8 +1736,8 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                 }
                 printk("###****************index----------(%u)",index);
                 printk(KERN_ALERT"###########pkt_qq_chain_len after delete(%u)",pkt_qq_chain_len);
-            }
-            mutex_unlock(&pkt_qq_mutex); // 解锁
+            }*/
+            //mutex_unlock(&pkt_qq_mutex); // 解锁
         }
         //#endif
 
