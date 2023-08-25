@@ -212,7 +212,7 @@ static INLINE bool __wlc_ampdu_pktq_penq(wlc_info_t *wlc, scb_ampdu_tx_t *scb_am
 static INLINE void * __wlc_ampdu_pktq_penq_head(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu,
     uint8 tid, void *pkt);
 //#include <wlc_qq.h>
-extern void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t *ini, ampdu_tx_info_t *ampdu_tx, struct scb *scb, tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh);
+extern void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t *ini, ampdu_tx_info_t *ampdu_tx, struct scb *scb, tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh, void *p);
 
 #if 0
 /* dump_flag_qqdx */
@@ -9841,7 +9841,7 @@ free_and_next:
             succ_mpdu++;
         }
         //ack_update_qq(txh_info->TxFrameID,was_acked,wlc->osh);
-        ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked,wlc->osh);
+        ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked,wlc->osh,p);
         #ifdef PROP_TXSTATUS
                     printk("----------[fyl] PROP_TXSTATUS----------");
 #endif

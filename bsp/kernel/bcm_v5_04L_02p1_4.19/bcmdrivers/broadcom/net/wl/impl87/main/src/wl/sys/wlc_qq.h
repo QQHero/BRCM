@@ -619,7 +619,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
         while(pkt_qq_cur != (struct pkt_qq *)NULL){                    
             //printk("###****************index----------(%u)",index);
             //if(cur_pkt_qq_chain_len<index + 10){//如果发现已经接近尾部就停止
-            if(!pkt_qq_chain_len_in_range((index + 10),0)){//如果发现已经接近尾部就停止
+            if(pkt_qq_chain_len_in_range((index + 10),0)){//如果发现已经接近尾部就停止
                 mutex_unlock(&pkt_qq_mutex_head); // 解锁
                 return;
             }
@@ -646,14 +646,48 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
 
 
 void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
-            tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh){
+            tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh, void *p){
     //mutex_lock(&pkt_qq_mutex); // 加锁
     //printk("**************debug1*******************");
     uint slottime_qq = APHY_SLOT_TIME;
     ampdu_tx_config_t *ampdu_tx_cfg = ampdu_tx->config;
     if (wlc->band->gmode && !wlc->shortslot)
         slottime_qq = BPHY_SLOT_TIME;
-    uint16 curTxFrameID = txh_info->TxFrameID;
+    //uint16 curTxFrameID = txh_info->TxFrameID;
+    uint8 *pkt_data = PKTDATA(osh, p);
+    uint corerev = wlc->pub->corerev;
+    uint hdrSize;
+    uint tsoHdrSize = 0;
+#ifdef WLC_MACDBG_FRAMEID_TRACE
+        uint8 *tsoHdrPtr;
+        uint8 epoch = 0;
+#endif
+    d11txhdr_t *txh;
+    struct dot11_header *d11h = NULL;
+    BCM_REFERENCE(d11h);
+    if (D11REV_LT(corerev, 40)) {
+        hdrSize = sizeof(d11txh_pre40_t);
+        txh = (d11txhdr_t *)pkt_data;
+        d11h = (struct dot11_header*)((uint8*)txh + hdrSize +
+            D11_PHY_HDR_LEN);
+    } else {
+#ifdef WLTOEHW
+        tsoHdrSize = WLC_TSO_HDR_LEN(wlc, (d11ac_tso_t*)pkt_data);
+#ifdef WLC_MACDBG_FRAMEID_TRACE
+        tsoHdrPtr = (void*)((tsoHdrSize != 0) ? pkt_data : NULL);
+        epoch = (tsoHdrPtr[2] & TOE_F2_EPOCH) ? 1 : 0;
+#endif /* WLC_MACDBG_FRAMEID_TRACE */
+#endif /* WLTOEHW */
+        if (D11REV_GE(corerev, 128)) {
+            hdrSize = D11_TXH_LEN_EX(wlc);
+        } else {
+            hdrSize = sizeof(d11actxh_t);
+        }
+
+        txh = (d11txhdr_t *)(pkt_data + tsoHdrSize);
+        d11h = (struct dot11_header*)((uint8*)txh + hdrSize);
+    }
+    uint16 curTxFrameID = ltoh16(*D11_TXH_GET_FRAMEID_PTR(wlc, txh));
     uint8 tid = ini->tid;
     uint16 index = 0;
     //uint16 deleteNUM_delay = 0;

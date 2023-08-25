@@ -1793,11 +1793,12 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                 while(pkt_qq_cur != (struct pkt_qq *)NULL){                    
                     //printk("###****************index----------(%u)",index);
                     //if(cur_pkt_qq_chain_len<index + 10){//如果发现已经接近尾部就停止
-                    if(!pkt_qq_chain_len_in_range((index + 10),0)){//如果发现已经接近尾部就停止
+                    if(pkt_qq_chain_len_in_range((index + 10),0)){//如果发现已经接近尾部就停止
                         mutex_unlock(&pkt_qq_mutex_head); // 解锁
-                        return;
+                        printk(KERN_ALERT"###########dbg_qq_end_time(%u)",OSL_SYSUPTIME());
+                        break;
                     }
-                    if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len,0)){        
+                    if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len*2,0)){        
                         printk("****************wrong pkt_qq_chain_len2----------(%u)",pkt_qq_chain_len);
                     }
                     //uint32 cur_time = OSL_SYSUPTIME();
