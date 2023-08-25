@@ -70,6 +70,9 @@
 #endif
 #define WLC_SCB_REPLAY_LIMIT 64    /* Maximal successive reply failure */
 
+#ifndef WL_PS_STATS
+#define WL_PS_STATS
+#endif /*WL_PS_STATS*/
 typedef struct wlc_scb_stats {
     uint32 tx_pkts;            /**< # of packets transmitted (ucast) */
     uint32 tx_failures;        /**< # of packets failed */

@@ -141,6 +141,10 @@
 #include <wlc_pmq.h>
 #include <wlc_twt.h>
 #include <wlc_dump.h>
+
+#ifndef WL_PS_STATS
+#define WL_PS_STATS
+#endif /*WL_PS_STATS*/
 #ifdef WL_PS_STATS
 #include <wlc_perf_utils.h>
 #endif /* WL_PS_STATS */

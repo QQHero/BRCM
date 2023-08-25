@@ -2,6 +2,7 @@
     "files.associations": {
         "string.h": "c",
         "chrono": "c",
-        "variant": "c"
+        "variant": "c",
+        "wlc_dump.h": "c"
     }
 }

@@ -78,6 +78,9 @@
 #include <hwa_export.h>
 #endif /* BCMHWA */
 
+#ifndef WL_PS_STATS
+#define WL_PS_STATS
+#endif /*WL_PS_STATS*/
 /* XXX define BCMDBG_MBSS_PROFILE:  Define this to enable:
  *   DTIM latency calc, PS on/off late
  */
