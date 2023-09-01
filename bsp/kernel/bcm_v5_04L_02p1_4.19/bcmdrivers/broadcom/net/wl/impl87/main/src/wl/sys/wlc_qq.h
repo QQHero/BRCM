@@ -368,16 +368,40 @@ struct pkt_qq {
     uint32 airtime_all;/*该数据包进入硬件发送队列以后所有已发送帧的airtime之和*/
     uint32 failed_time_list_qq[10];/*发射失败时间列表*/
     uint32 ccastats_qq[CCASTATS_MAX];/*一些发送时间相关的变量*/
-    uint32 time_in_pretend_tot;/*总的进入PPS 时间*/
+    /*PPS相关变量*/
+	uint32 ps_pretend_probe;
+	uint32 ps_pretend_count;
+	uint8  ps_pretend_succ_count;
+	uint8  ps_pretend_failed_ack_count;
+    uint32 time_in_pretend_tot;/*总的进入PPS 时间
+    该统计博通并未开启，通过BCMDBG宏来关闭相关统计，需要一个一个开启（将BCMDBG改为BCMDBG_PPS_qq并define），如下是所开启的相关部分：
+    1.wlc_pspretend_scb_time_upd相关（wlc_pspretend.h，wlc_pspretend.c,wlc_app.c）
+    2.wlc_pspretend.h中增加#ifndef BCMDBG_PPS_qq   #define BCMDBG_PPS_qq   #endif
+    3.wlc_pspretend_supr_upd相关（wlc_pspretend.h，wlc_pspretend.c,wlc_app.c,wlc_ampdu.c,wlc_txs.c）
+    4.scb_pps_info_t定义处（wlc_pspretend.c）
+    5.本文件   PPS时间统计相关   部分
+    */
+
     struct pkt_qq *next;
     struct pkt_qq *prev;
     
 }pkt_qq_t;
 struct pkt_qq *pkt_qq_chain_head = (struct pkt_qq *)NULL;
 struct pkt_qq *pkt_qq_chain_tail = (struct pkt_qq *)NULL;
+
+static struct pkt_qq *pkt_qq_last;/*用于记录上次搜索到的数据包，减少遍历搜索时间*/
+static uint16 index_last;/*用于记录上次搜索到的数据包所在编号*/
+
 uint16 pkt_qq_chain_len = 0;
-uint16 max_pkt_qq_chain_len = 1666;
-uint16 pkt_qq_ddl = 6666;
+uint16 max_pkt_qq_chain_len = 666;
+uint16 pkt_qq_ddl = 666;
+uint16 pkt_phydelay_dict_len = 30;
+uint16 pkt_phydelay_dict_step = 10;
+uint32 pkt_phydelay_dict[30] = {0};//记录不同时延情况下的pkt数量
+/*
+for(i = 0; i<pkt_phydelay_dict_len; i++){
+    pkt_phydelay_dict[i] = 0;
+}*/
 /*统计链表增减节点的各种情况*/
 uint32 pkt_qq_chain_len_add = 0;//链表增加
 uint32 pkt_qq_chain_len_acked = 0;//正常收到ack并删除
@@ -412,7 +436,9 @@ void timer_callback_qq(struct timer_list *t) {
 }
 #endif
 
-
+#ifndef BCMDBG_PPS_qq
+#define BCMDBG_PPS_qq
+#endif
 /* PPS时间统计相关 *//* module private info */
 struct wlc_pps_info {
 	wlc_info_t *wlc;
@@ -429,15 +455,17 @@ typedef struct {
 	uint8  ps_pretend_succ_count;
 	uint8  ps_pretend_failed_ack_count;
 	uint8  reserved[2];
-//#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 	uint32 ps_pretend_total_time_in_pps;
 	uint32 ps_pretend_suppress_count;
 	uint32 ps_pretend_suppress_index;
-//#endif /* BCMDBG */
+#endif /* BCMDBG_PPS_qq */
 } scb_pps_info_t;
 
+#ifdef BCMDBG_PPS_qq
 #define SCB_PPSINFO_LOC(pps, scb) (scb_pps_info_t **)SCB_CUBBY(scb, (pps)->scb_handle)
 #define SCB_PPSINFO(pps, scb) *SCB_PPSINFO_LOC(pps, scb)
+#endif /* BCMDBG_PPS_qq */
 
 
 
@@ -529,7 +557,11 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur){
 void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //mutex_lock(&pkt_qq_mutex); // 加锁
     //printk("**************debug11*******************");
-    if((pkt_qq_cur->pktSEQ == pkt_qq_chain_head->pktSEQ)&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
+    if((pkt_qq_last != (struct pkt_qq *)NULL)&&(pkt_qq_cur->FrameID == pkt_qq_last->FrameID)){
+        pkt_qq_last = (struct pkt_qq *)NULL;
+        index_last = 0;
+    }
+    if((pkt_qq_cur->FrameID == pkt_qq_chain_head->FrameID)&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
         //printk("**************debug12******************");
         if(pkt_qq_chain_head->next == (struct pkt_qq *)NULL){//防止删除节点时出错
             //printk("**************debug13*******************");
@@ -646,7 +678,11 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
 
 
 void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *ampdu_tx, struct scb *scb, 
-            tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh, void *p){
+            tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh
+            , void *p, bool use_last_pkt, uint cur_mpdu_index){
+    //新bool use_last_pkt变量，用于减少遍历搜索的时间，在此之前每个数据包都需要从头开始搜索，太耗时间
+    //加上它以后，就可以从上次搜索的地方开始搜索。对于AMPDU的情况会有较好的结果
+
     //mutex_lock(&pkt_qq_mutex); // 加锁
     //printk("**************debug1*******************");
     uint slottime_qq = APHY_SLOT_TIME;
@@ -689,14 +725,26 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     }
     uint16 curTxFrameID = ltoh16(*D11_TXH_GET_FRAMEID_PTR(wlc, txh));
     uint8 tid = ini->tid;
-    uint16 index = 0;
     //uint16 deleteNUM_delay = 0;
     uint32 cur_airtime = TX_STATUS128_TXDUR(TX_STATUS_MACTXS_S2(txs));
     mutex_lock(&pkt_qq_mutex_head); // 加锁
     read_lock(&pkt_qq_mutex_len); // 加锁
     uint16 cur_pkt_qq_chain_len = pkt_qq_chain_len;
     read_unlock(&pkt_qq_mutex_len); // 解锁
-    struct pkt_qq *pkt_qq_cur = pkt_qq_chain_head;
+    struct pkt_qq *pkt_qq_cur;
+    uint16 index;
+    read_lock(&pkt_qq_mutex_len); // 加锁
+    if((!use_last_pkt)||(index_last <= 0) || (pkt_qq_last == (struct pkt_qq *)NULL)\
+        ||(index_last>=cur_pkt_qq_chain_len)){
+        /*如果use_last_pkt为false，或者后两个不对劲，就重新设置*/
+        pkt_qq_cur = pkt_qq_chain_head;
+        index = 0;
+    }else{
+        pkt_qq_cur = pkt_qq_last;
+        index = index_last;
+
+    }
+    read_unlock(&pkt_qq_mutex_len); // 解锁
     bool found_pkt_node_qq = FALSE;
     while((pkt_qq_cur != (struct pkt_qq *)NULL)&&(index<cur_pkt_qq_chain_len)){
         struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
@@ -717,6 +765,15 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
             found_pkt_node_qq = TRUE;
             pkt_qq_cur->airtime_self = cur_airtime;
             if(was_acked){//如果成功ACK 
+                uint16 index_i = 0;
+                for(int i = 0; i<pkt_phydelay_dict_len; i++){
+                    index_i = i;
+                    if(i*pkt_phydelay_dict_step+pkt_phydelay_dict_step>pkt_qq_cur_PHYdelay){
+                        
+                        break;
+                    }
+                }
+                pkt_phydelay_dict[index_i]++;
                 pkt_qq_cur->free_time = cur_time;
                 pkt_qq_cur->free_txop = wlc_bmac_cca_read_counter(wlc->hw, M_CCA_TXOP_L_OFFSET(wlc), M_CCA_TXOP_H_OFFSET(wlc));
                 uint32 ps_dur_trans = 0;//当前帧发送期间PS 时间统计
@@ -737,50 +794,65 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                     ccastats_qq_differ[CCASTATS_NOCTG] +
                     ccastats_qq_differ[CCASTATS_NOPKT];
                 uint32 txop_in_fly = pkt_qq_cur->free_txop - pkt_qq_cur->into_hw_txop;
+                scb_pps_info_t *pps_scb_qq = SCB_PPSINFO(wlc->pps_info, scb);            
+                uint32 time_in_pretend_tot_qq = pps_scb_qq->ps_pretend_total_time_in_pps;
+                if (pps_scb_qq == NULL){
+                    time_in_pretend_tot_qq += R_REG(wlc->osh, D11_TSFTimerLow(wlc)) - pps_scb_qq->ps_pretend_start;
+                }
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>1){//如果时延较高就打印出来
-                    printk("----------[fyl] acked_FrameID----------(%u)",pkt_qq_cur->FrameID);
-                    printk("----------[fyl] pktSEQ----------(%u)",pkt_qq_cur->pktSEQ);
-                    printk("----------[fyl] pkt_qq_cur->failed_cnt----------(%u)",pkt_qq_cur->failed_cnt);
-                    printk("----------[fyl] pkt_qq_cur_PHYdelay----------(%u)",pkt_qq_cur_PHYdelay);
-                    printk("----------[fyl] pkt_qq_cur->free_time----------(%u)",pkt_qq_cur->free_time);
-                    printk("----------[fyl] pkt_qq_cur->into_hw_time----------(%u)",pkt_qq_cur->into_hw_time);
-                    printk("----------[fyl] pkt_qq_cur->airtime_self----------(%u)",pkt_qq_cur->airtime_self);
-                    //printk("----------[fyl] pkt_qq_cur->airtime_all----------(%u)",pkt_qq_cur->airtime_all);
-                    printk("----------[fyl] busy_qq----------(%u)",busy_qq);
-                    printk("----------[fyl] free_txop:::into_hw_txop:::txop_in_fly:::txop*9----------(%u:%u:%u:%u)",pkt_qq_cur->free_txop, pkt_qq_cur->into_hw_txop,txop_in_fly,txop_in_fly*slottime_qq);
-                    
-                    printk("----------[fyl] ampdu_tx_cfg->ba_policy----------(%u)",ampdu_tx_cfg->ba_policy);
-                    //printk("----------[fyl] ampdu_tx_cfg->ba_policy::ba_rx_wsize::delba_timeout----------(%u)",
-                                //ampdu_tx_cfg->ba_policy,ba_rx_wsize,delba_timeout);
-                    /*printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)",ccastats_qq_differ[0]\
-                        ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
-                        ,ccastats_qq_differ[4]);*/
-                    scb_pps_info_t *pps_scb_qq = SCB_PPSINFO(wlc->pps_info, scb);            
-                    uint32 time_in_pretend_tot_qq = pps_scb_qq->ps_pretend_total_time_in_pps;
-                    if (pps_scb_qq!= NULL){
-                        time_in_pretend_tot_qq += R_REG(wlc->osh, D11_TSFTimerLow(wlc)) - pps_scb_qq->ps_pretend_start;
-                    }
-                    printk("----------[fyl] time_in_pretend----------(%u)",time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot);
-                    printk("----------[fyl] ini->tid----------(%u)",tid);
-                    printk("----------[fyl] scb->ps_tottime:scb->ps_starttime:ps_dur_trans----------(%u:%u:%u)",scb->ps_tottime,scb->ps_starttime,ps_dur_trans);
-                    
-                    printk("----------[fyl] PS:::ps_pretend:::PS_TWT:::ps_txfifo_blk----------(%u:%u:%u:%u)",
-                                scb->PS, scb->ps_pretend,scb->PS_TWT,scb->ps_txfifo_blk);
-                    printk("--[fyl] txs->status.rts_tx_cnt:txs->status.cts_tx_cnt---(%u:%u)",txs->status.rts_tx_cnt,txs->status.cts_rx_cnt);
-                    printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)",ccastats_qq_differ[0]\
-                        ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
-                        ,ccastats_qq_differ[4],ccastats_qq_differ[5],ccastats_qq_differ[6]\
-                        ,ccastats_qq_differ[7],ccastats_qq_differ[8]);
-                    if(pkt_qq_cur->failed_cnt>0){
-                        printk("failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)",pkt_qq_cur->failed_time_list_qq[0]\
-                        ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
-                        ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
-                        ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
+                    //int dump_rand_flag = OSL_RAND() % 10000;
+                    if (!use_last_pkt) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
+                        printk("----------[fyl] OSL_SYSUPTIME()1----------(%u)",OSL_SYSUPTIME());
+                        printk("----------[fyl] acked_FrameID----------(%u)",pkt_qq_cur->FrameID);
+                        printk("----------[fyl] pktSEQ----------(%u)",pkt_qq_cur->pktSEQ);
+                        read_lock(&pkt_qq_mutex_len); // 加锁
+                        printk("----------[fyl] pkt_qq_chain_len----------(%u)",pkt_qq_chain_len);
+                        read_unlock(&pkt_qq_mutex_len); // 解锁
+                        printk("----------[fyl] cur_mpdu_index----------(%u)",cur_mpdu_index);/*当前mpdu在ampdu中的编号*/
+                        printk("----------[fyl] pkt_qq_cur->failed_cnt----------(%u)",pkt_qq_cur->failed_cnt);
+                        printk("----------[fyl] pkt_qq_cur_PHYdelay----------(%u)",pkt_qq_cur_PHYdelay);
+                        printk("----------[fyl] pkt_qq_cur->free_time----------(%u)",pkt_qq_cur->free_time);
+                        printk("----------[fyl] pkt_qq_cur->into_hw_time----------(%u)",pkt_qq_cur->into_hw_time);
+                        printk("----------[fyl] pkt_qq_cur->airtime_self----------(%u)",pkt_qq_cur->airtime_self);
+                        //printk("----------[fyl] pkt_qq_cur->airtime_all----------(%u)",pkt_qq_cur->airtime_all);
+                        printk("----------[fyl] busy_qq----------(%u)",busy_qq);
+                        printk("----------[fyl] free_txop:::into_hw_txop:::txop_in_fly:::txop*9----------(%u:%u:%u:%u)",pkt_qq_cur->free_txop, pkt_qq_cur->into_hw_txop,txop_in_fly,txop_in_fly*slottime_qq);
+                        printk("----------[fyl] pkt_qq_cur:ps_pretend_probe(%u):::ps_pretend_count(%u):::ps_pretend_succ_count(%u):::ps_pretend_failed_ack_count(%u)----------",\
+                        pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count);
+                        printk("----------[fyl] pps_scb_qq:ps_pretend_probe(%u):::ps_pretend_count(%u):::ps_pretend_succ_count(%u):::ps_pretend_failed_ack_count(%u)----------",\
+                        pps_scb_qq->ps_pretend_probe, pps_scb_qq->ps_pretend_count,pps_scb_qq->ps_pretend_succ_count,pps_scb_qq->ps_pretend_failed_ack_count);
+
+                        printk("----------[fyl] ampdu_tx_cfg->ba_policy----------(%u)",ampdu_tx_cfg->ba_policy);
+                        //printk("----------[fyl] ampdu_tx_cfg->ba_policy::ba_rx_wsize::delba_timeout----------(%u)",
+                                    //ampdu_tx_cfg->ba_policy,ba_rx_wsize,delba_timeout);
+                        /*printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)",ccastats_qq_differ[0]\
+                            ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
+                            ,ccastats_qq_differ[4]);*/
+                        printk("----------[fyl] time_in_pretend_tot_qq:::pkt_qq_cur->time_in_pretend_tot:::R_REG(wlc->osh, D11_TSFTimerLow(wlc)):::pps_scb_qq->ps_pretend_start:::time_in_pretend----------(%u:%u:%u:%u:%u)",time_in_pretend_tot_qq,pkt_qq_cur->time_in_pretend_tot,R_REG(wlc->osh, D11_TSFTimerLow(wlc)),pps_scb_qq->ps_pretend_start,time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot);
+                        printk("----------[fyl] ini->tid----------(%u)",tid);
+                        printk("----------[fyl] scb->ps_tottime:scb->ps_starttime:ps_dur_trans----------(%u:%u:%u)",scb->ps_tottime,scb->ps_starttime,ps_dur_trans);
+                        
+                        printk("----------[fyl] PS:::ps_pretend:::PS_TWT:::ps_txfifo_blk----------(%u:%u:%u:%u)",
+                                    scb->PS, scb->ps_pretend,scb->PS_TWT,scb->ps_txfifo_blk);
+                        printk("--[fyl] txs->status.rts_tx_cnt:txs->status.cts_tx_cnt---(%u:%u)",txs->status.rts_tx_cnt,txs->status.cts_rx_cnt);
+                        printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)",ccastats_qq_differ[0]\
+                            ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
+                            ,ccastats_qq_differ[4],ccastats_qq_differ[5],ccastats_qq_differ[6]\
+                            ,ccastats_qq_differ[7],ccastats_qq_differ[8]);
+                        if(pkt_qq_cur->failed_cnt>0){
+                            printk("failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)",pkt_qq_cur->failed_time_list_qq[0]\
+                            ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
+                            ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
+                            ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
+                        }
+                        printk("----------[fyl] OSL_SYSUPTIME()2----------(%u)",OSL_SYSUPTIME());
                     }
 
                 }
                 /*删除已经ACK的数据包节点*/
                 //struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
+                pkt_qq_last = pkt_qq_cur_next;
+                index_last = index;
                 pkt_qq_delete(pkt_qq_cur,osh);
                 pkt_qq_chain_len_acked ++;
                 //pkt_qq_cur = pkt_qq_cur_next;
@@ -808,12 +880,13 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 }
                 memcpy(debug_qqdx_retry_pkt.failed_time_list_qq,pkt_qq_cur->failed_time_list_qq,sizeof(pkt_qq_cur->failed_time_list_qq));
                 
+                /*
                 printk("----------[fyl] unacked_FrameID----------(%u)",pkt_qq_cur->FrameID);
                 printk("----------[fyl] pktSEQ----------(%u)",pkt_qq_cur->pktSEQ);
                 printk("----------[fyl] cur_time----------(%u)",cur_time);
                 printk("----------[fyl] into_hw_time----------(%u)",pkt_qq_cur->into_hw_time);
                 printk("----------[fyl] now-into_hw_time----------(%u)",cur_time-pkt_qq_cur->into_hw_time);
-                
+                */
                 
                 
                 //debug_qqdx_retry_pkt.failed_time_list_qq = pkt_qq_cur->failed_time_list_qq;
@@ -858,6 +931,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     pkt_qq_del_timeout_ergodic(osh);
     //mutex_unlock(&pkt_qq_mutex); // 解锁
     //printk("**************debug8*******************");
+    
 }
 
 

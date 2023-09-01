@@ -93,11 +93,11 @@ typedef struct {
 	uint8  ps_pretend_succ_count;
 	uint8  ps_pretend_failed_ack_count;
 	uint8  reserved[2];
-#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 	uint32 ps_pretend_total_time_in_pps;
 	uint32 ps_pretend_suppress_count;
 	uint32 ps_pretend_suppress_index;
-#endif /* BCMDBG */
+#endif /* BCMDBG_PPS_qq */
 } scb_pps_info_t;
 
 #define SCB_PPSINFO_LOC(pps, scb) (scb_pps_info_t **)SCB_CUBBY(scb, (pps)->scb_handle)
@@ -813,7 +813,7 @@ wlc_pspretend_pkt_relist(wlc_pps_info_t *pps, scb_t *scb, int retry_limit, int t
 	       !SCB_PS_PRETEND_NORMALPS(scb);
 }
 
-#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 void
 wlc_pspretend_supr_upd(wlc_pps_info_t *pps, scb_t *scb, uint supr_status)
 {
@@ -853,7 +853,7 @@ wlc_pspretend_supr_upd(wlc_pps_info_t *pps, scb_t *scb, uint supr_status)
 		pps_scb->ps_pretend_suppress_count = 0;
 	}
 }
-#endif /* BCMDBG */
+#endif /* BCMDBG_PPS_qq */
 
 /* scb->ps_pretend_start contains the TSF time for when ps pretend was
  * last activated. In poor link conditions, there is a high chance that
@@ -918,7 +918,7 @@ wlc_pspretend_scb_ps_off(wlc_pps_info_t *pps, scb_t *scb)
 	pps_scb->ps_pretend_failed_ack_count = 0;
 }
 
-#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 void
 wlc_pspretend_scb_time_upd(wlc_pps_info_t *pps, scb_t *scb)
 {
@@ -944,7 +944,7 @@ wlc_pspretend_scb_time_get(wlc_pps_info_t *pps, scb_t *scb)
 	scb_pps_info_t *pps_scb = SCB_PPSINFO(pps, scb);
 	return (pps_scb != NULL) ? pps_scb->ps_pretend_total_time_in_pps : 0;
 }
-#endif /* BCMDBG */
+#endif /* BCMDBG_PPS_qq */
 
 /* When sending the CSA, packets are going to be dropped somewhere in the process as
  * the radio channel changes and the packets in transit are still set up for the

@@ -1209,9 +1209,25 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
         return;
     }
 
-#if defined(BCMDBG) && defined(PSPRETEND)
+//#ifdef dump_stack_qqdx_print
+    int dump_rand_flag = OSL_RAND() % 100000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl] wlc_apps_scb_ps_off dump_stack start----------");
+        dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_apps_scb_ps_off dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
+#if defined(BCMDBG_PPS_qq) && defined(PSPRETEND)
     if (SCB_PS_PRETEND(scb)) {
         wlc_pspretend_scb_time_upd(wlc->pps_info, scb);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl] wlc_pspretend_scb_time_upd(wlc->pps_info, scb); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_pspretend_scb_time_upd(wlc->pps_info, scb); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 #endif /* PSPRETEND */
 
@@ -1233,6 +1249,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
         wlc->ps_txfifo_blk_scb_cnt--;
         /* remove PMQ entry for this STA */
         wlc_pmq_process_switch(wlc, scb, PMQ_REMOVE);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl] wlc_pmq_process_switch(wlc, scb, PMQ_REMOVE); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_pmq_process_switch(wlc, scb, PMQ_REMOVE); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 #endif /* WL_PS_SCB_TXFIFO_BLK */
 
@@ -1250,12 +1274,28 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
 #ifdef PSPRETEND
     if (wlc->pps_info != NULL) {
         wlc_pspretend_scb_ps_off(wlc->pps_info, scb);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl] wlc_pspretend_scb_ps_off(wlc->pps_info, scb); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_pspretend_scb_ps_off(wlc->pps_info, scb); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 #endif /* PSPRETEND */
 
 #if defined(BCMPCIEDEV)
     /* Reset all pending fetch and rollback flow fetch ptrs */
     wlc_scb_flow_ps_update(wlc->wl, SCB_FLOWID(scb), FALSE);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_scb_flow_ps_update(wlc->wl, SCB_FLOWID(scb), FALSE); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  wlc_scb_flow_ps_update(wlc->wl, SCB_FLOWID(scb), FALSE); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
 #endif
 
     /* XXX wlc_wlfc_scb_ps_off did a reset of AMPDU seq with a BAR.
@@ -1276,6 +1316,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
         !(bss_info->ps_trans_status & BSS_PS_ON_BY_TWT)) {
 
         wlc_apps_bcmc_ps_off_start(wlc, WLC_BCMCSCB_GET(wlc, bsscfg));
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_bcmc_ps_off_start(wlc, WLC_BCMCSCB_GET(wlc, bsscfg)); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_bcmc_ps_off_start(wlc, WLC_BCMCSCB_GET(wlc, bsscfg)); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 
     scb_psinfo->psp_flags &= ~PS_PSP_ONRESP;
@@ -1295,6 +1343,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
     if (TXBF_ENAB(wlc->pub)) {
         /* Notify txbf module of the scb's PS change */
         wlc_txbf_scb_ps_notify(wlc->txbf, scb, FALSE);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_txbf_scb_ps_notify(wlc->txbf, scb, FALSE); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  wlc_txbf_scb_ps_notify(wlc->txbf, scb, FALSE); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 #endif /* WL_BEAMFORMING */
 
@@ -1304,6 +1360,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
      */
     if (scb_psinfo->suppressed_pkts > 0) {
         wlc_apps_dequeue_scb_supr_psq(wlc, scb);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_dequeue_scb_supr_psq(wlc, scb); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_dequeue_scb_supr_psq(wlc, scb); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     }
 #endif /* WL_USE_SUPR_PSQ */
 
@@ -1317,6 +1381,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
 #ifdef HNDPQP
         /* Page in all Host resident packets into dongle */
         wlc_apps_scb_pqp_pgi(wlc, scb, WLC_PREC_BMP_ALL, PKTQ_PKTS_ALL, PQP_PGI_PS_OFF);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_scb_pqp_pgi(wlc, scb, WLC_PREC_BMP_ALL, PKTQ_PKTS_ALL, PQP_PGI_PS_OFF); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_scb_pqp_pgi(wlc, scb, WLC_PREC_BMP_ALL, PKTQ_PKTS_ALL, PQP_PGI_PS_OFF); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
 #endif /* HNDPQP */
 
 #ifdef WLTAF
@@ -1325,11 +1397,32 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
 #endif /* WLTAF */
         {
             /* Move psq entries to Common Q for immediate tx */
+//#ifdef dump_stack_qqdx_print
+            printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+//#endif /*dump_stack_qqdx_print*/
             wlc_apps_ps_send(wlc, scb, WLC_PREC_BMP_ALL, FALSE, NULL,
                 WLC_APPS_RELEASE_ALL);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_ps_send(wlc, scb, WLC_PREC_BMP_ALL, FALSE, NULL, dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_ps_send(wlc, scb, WLC_PREC_BMP_ALL, FALSE, NULL, dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
         }
     } else { /* free any pending frames */
         wlc_apps_ps_flush(wlc, scb);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_ps_flush(wlc, scb); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_ps_flush(wlc, scb); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
 
         /* callbacks in wlc_apps_ps_flush are not allowed to free scb */
         if (!ETHER_ISMULTI(&ea) && (wlc_scbfind(wlc, bsscfg, &ea) == NULL)) {
@@ -1345,9 +1438,25 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
     /* Update TAF state */
     wlc_taf_scb_state_update(wlc->taf_handle, scb, TAF_NO_SOURCE, TAF_PARAM(scb->PS),
         TAF_SCBSTATE_POWER_SAVE);
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  TAF_SCBSTATE_POWER_SAVE); dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  TAF_SCBSTATE_POWER_SAVE); dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
 #endif /* WLTAF */
 
 #ifdef PROP_TXSTATUS
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  PROP_TXSTATUS dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  PROP_TXSTATUS dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     if (PROP_TXSTATUS_ENAB(wlc->pub)) {
         wlc_check_txq_fc(wlc, SCB_WLCIFP(scb)->qi);
         if (AMPDU_ENAB(wlc->pub)) {
@@ -1357,6 +1466,14 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
 #endif /* PROP_TXSTATUS */
 
     if (scb_psinfo->change_scb_state_to_auth) {
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  scb_psinfo->change_scb_state_to_auth) dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  scb_psinfo->change_scb_state_to_auth) dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
         wlc_scb_resetstate(wlc, scb);
         wlc_scb_setstatebit(wlc, scb, AUTHENTICATED);
 
@@ -1372,12 +1489,32 @@ wlc_apps_scb_ps_off(wlc_info_t *wlc, struct scb *scb, bool discard)
      * PQP will set flags for current PS transition and
      * resume the remain process when resource is available.
      */
+//#ifdef dump_stack_qqdx_print
+    //int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  HNDPQP dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"----------[fyl]  HNDPQP dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
     if (PQP_PGI_PS_TRANS_OFF_ISSET(scb_psinfo)) {
         return;
     }
 #endif /* HNDPQP */
 
+    //int dump_rand_flag = OSL_RAND() % 10000;
+//#ifdef dump_stack_qqdx_print
+    printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+//#endif /*dump_stack_qqdx_print*/
     wlc_apps_scb_ps_off_ps_pgi_done(wlc, scb, scb_psinfo);
+//#ifdef dump_stack_qqdx_print
+    if (dump_rand_flag>=0) {
+        printk(KERN_ALERT"----------[fyl]  end dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+        printk(KERN_ALERT"----------[fyl]  end dump_stack stop----------");
+    }
+//#endif /*dump_stack_qqdx_print*/
 }
 
 static void
@@ -4316,6 +4453,12 @@ void
 wlc_apps_twt_sp_release_ps(wlc_info_t *wlc, scb_t *scb)
 {
     struct apps_scb_psinfo *scb_psinfo;
+//#ifdef dump_stack_qqdx_print
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_twt_sp_release_ps dump_stack start----------");
+        //dump_stack();
+        printk(KERN_ALERT"###########OSL_SYSUPTIME()(%u)",OSL_SYSUPTIME());
+        printk(KERN_ALERT"----------[fyl]  wlc_apps_twt_sp_release_ps dump_stack stop----------");
+//#endif /*dump_stack_qqdx_print*/
 
     scb_psinfo = SCB_PSINFO(wlc->psinfo, scb);
     if (scb_psinfo == NULL)

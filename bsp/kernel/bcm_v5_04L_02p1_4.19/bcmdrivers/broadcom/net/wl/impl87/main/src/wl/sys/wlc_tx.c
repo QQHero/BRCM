@@ -1718,10 +1718,14 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             pkt_qq_cur->airtime_all = 0;
             scb_pps_info_t *pps_scb_qq = SCB_PPSINFO(wlc->pps_info, scb);            
             uint32 time_in_pretend_tot_qq = pps_scb_qq->ps_pretend_total_time_in_pps;
-            if (pps_scb_qq != NULL){
+            if (pps_scb_qq == NULL){
                 time_in_pretend_tot_qq += R_REG(wlc->osh, D11_TSFTimerLow(wlc)) - pps_scb_qq->ps_pretend_start;
             }
             pkt_qq_cur->time_in_pretend_tot = time_in_pretend_tot_qq;
+            pkt_qq_cur->ps_pretend_probe = pps_scb_qq->ps_pretend_probe;
+            pkt_qq_cur->ps_pretend_count = pps_scb_qq->ps_pretend_count;
+            pkt_qq_cur->ps_pretend_succ_count = pps_scb_qq->ps_pretend_succ_count;
+            pkt_qq_cur->ps_pretend_failed_ack_count = pps_scb_qq->ps_pretend_failed_ack_count;
 
             /*用于记录出现重传包重传时，函数调用路径*/
             bool retry_flag_qqdx = FALSE;
@@ -1774,6 +1778,20 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                 printk(KERN_ALERT"###########pkt_qq_chain_len_outofrange(%u)",pkt_qq_chain_len_outofrange);
                 printk(KERN_ALERT"###########pkt_qq_chain_len_notfound(%u)",pkt_qq_chain_len_notfound);
                 printk(KERN_ALERT"###########pkt_qq_chain_len_found(%u)",pkt_qq_chain_len_found);
+                printk("pkt_phydelay_dict:10(%u)20(%u)30(%u)40(%u)50(%u)60(%u)70(%u)80(%u)90(%u)100(%u)\
+                110(%u)120(%u)130(%u)140(%u)150(%u)160(%u)170(%u)180(%u)190(%u)200(%u)\
+                210(%u)220(%u)230(%u)240(%u)250(%u)260(%u)270(%u)280(%u)290(%u)300(%u)",pkt_phydelay_dict[0]\
+                ,pkt_phydelay_dict[1],pkt_phydelay_dict[2],pkt_phydelay_dict[3]\
+                ,pkt_phydelay_dict[4],pkt_phydelay_dict[5],pkt_phydelay_dict[6]\
+                ,pkt_phydelay_dict[7],pkt_phydelay_dict[8],pkt_phydelay_dict[9],pkt_phydelay_dict[10]\
+                ,pkt_phydelay_dict[11],pkt_phydelay_dict[12],pkt_phydelay_dict[13]\
+                ,pkt_phydelay_dict[14],pkt_phydelay_dict[15],pkt_phydelay_dict[16]\
+                ,pkt_phydelay_dict[17],pkt_phydelay_dict[18],pkt_phydelay_dict[19],pkt_phydelay_dict[20]\
+                ,pkt_phydelay_dict[21],pkt_phydelay_dict[22],pkt_phydelay_dict[23]\
+                ,pkt_phydelay_dict[24],pkt_phydelay_dict[25],pkt_phydelay_dict[26]\
+                ,pkt_phydelay_dict[27],pkt_phydelay_dict[28],pkt_phydelay_dict[29]);
+            
+
 #ifdef QQ_TIMER_ABLE
                 printk(KERN_ALERT"###########timer_index_qq(%u)",timer_index_qq);
 #endif
@@ -4001,6 +4019,15 @@ wlc_is_packet_fragmented(wlc_info_t *wlc, struct scb *scb, void *lb)
 void BCMFASTPATH
 wlc_send_q(wlc_info_t *wlc, wlc_txq_info_t *qi)
 {
+    /* dump_flag_qqdx */
+#ifdef dump_stack_qqdx_print
+    int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=9900) {
+        printk(KERN_ALERT"----------[fyl] wlc_send_q dump_stack start----------");
+        dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_send_q dump_stack stop----------");
+    }
+#endif /*dump_stack_qqdx_print*/
     /* Don't send the packets while flushing DMA and low tx queues */
     if (!wlc->pub->up || wlc->hw->reinit) {
         return;
@@ -6058,6 +6085,15 @@ wlc_txfifo_complete(wlc_info_t *wlc, scb_t *scb, uint fifo, uint16 txpktpend)
 {
     txq_t *txq;                /**< consisting of a queue for every d11 fifo */
 
+    /* dump_flag_qqdx */
+#ifdef dump_stack_qqdx_print
+    int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=9900) {
+        printk(KERN_ALERT"----------[fyl] wlc_txfifo_complete dump_stack start----------");
+        dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_txfifo_complete dump_stack stop----------");
+    }
+#endif /*dump_stack_qqdx_print*/
     /* Select the correct txq context for completions.
      * txq will be the queue being detached if a detach is in progress.
      */

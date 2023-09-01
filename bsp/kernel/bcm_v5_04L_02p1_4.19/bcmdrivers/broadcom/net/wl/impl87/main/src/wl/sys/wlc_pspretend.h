@@ -139,8 +139,11 @@
 #define SCB_PS_PRETEND_CSA_PREVENT(scb, bsscfg)	(0)
 #endif /* PSPRETEND */
 
+#ifndef BCMDBG_PPS_qq
+#define BCMDBG_PPS_qq
+#endif
 #ifdef PSPRETEND
-#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 void wlc_pspretend_scb_time_upd(wlc_pps_info_t *pps, scb_t *scb);
 uint wlc_pspretend_scb_time_get(wlc_pps_info_t *pps, scb_t *scb);
 void wlc_pspretend_supr_upd(wlc_pps_info_t *pps, scb_t *scb, uint supr_status);

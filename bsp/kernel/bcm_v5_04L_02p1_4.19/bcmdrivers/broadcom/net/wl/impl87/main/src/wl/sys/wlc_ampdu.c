@@ -212,7 +212,7 @@ static INLINE bool __wlc_ampdu_pktq_penq(wlc_info_t *wlc, scb_ampdu_tx_t *scb_am
 static INLINE void * __wlc_ampdu_pktq_penq_head(wlc_info_t *wlc, scb_ampdu_tx_t *scb_ampdu,
     uint8 tid, void *pkt);
 //#include <wlc_qq.h>
-extern void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t *ini, ampdu_tx_info_t *ampdu_tx, struct scb *scb, tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh, void *p);
+extern void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t *ini, ampdu_tx_info_t *ampdu_tx, struct scb *scb, tx_status_t *txs, wlc_pkttag_t* pkttag, wlc_txh_info_t *txh_info,bool was_acked,osl_t *osh, void *p, bool use_last_pkt,uint cur_mpdu_index);
 
 #if 0
 /* dump_flag_qqdx */
@@ -6388,6 +6388,15 @@ int BCMFASTPATH
 wlc_sendampdu(ampdu_tx_info_t *ampdu_tx, wlc_txq_info_t *qi, void **pdu, int prec,
     struct spktq *output_q, int *pkt_cnt, uint fifo)
 {
+    /* dump_flag_qqdx */
+#ifdef dump_stack_qqdx_print
+    int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=9900) {
+        printk(KERN_ALERT"----------[fyl] wlc_sendampdu dump_stack start----------");
+        dump_stack();
+        printk(KERN_ALERT"----------[fyl] wlc_sendampdu dump_stack stop----------");
+    }
+#endif /*dump_stack_qqdx_print*/
     wlc_info_t *wlc;
     void *p;
     struct scb *scb;
@@ -9397,14 +9406,14 @@ wlc_ampdu_dotxstatus_aqm_complete(ampdu_tx_info_t *ampdu_tx, struct scb *scb,
     /* auto rate is based on rate sel and if the frame is attempted to tx per supr_ind */
     auto_rate = update_ratesel;
 
-#if defined(BCMDBG) && defined(PSPRETEND)
+#if defined(BCMDBG_PPS_qq) && defined(PSPRETEND)
     /* we are draining the fifo yet we received a tx status which isn't suppress - this
      * is an error we should trap if we are still in the same ps pretend instance
      */
     if ((BSSCFG_AP(bsscfg) || BSSCFG_IBSS(bsscfg)) && PS_PRETEND_ENABLED(bsscfg)) {
         wlc_pspretend_supr_upd(wlc->pps_info, scb, supr_status);
     }
-#endif /* BCMDBG && PSPRETEND */
+#endif /* BCMDBG_PPS_qq && PSPRETEND */
 
     /* Check if interference is still there */
     if (wlc->rfaware_lifetime && wlc->exptime_cnt && (supr_status != TX_STATUS_SUPR_EXPTIME))
@@ -9450,6 +9459,12 @@ wlc_ampdu_dotxstatus_aqm_complete(ampdu_tx_info_t *ampdu_tx, struct scb *scb,
     /* ncons is non-zero, so can enter unconditionally. exit via break in loop
      * body.
      */
+
+
+
+    /* dump_flag_qqdx */
+    bool first_pkt_flag_qqdx = TRUE;
+    /* dump_flag_qqdx */
 
     while (TRUE) { /* loops over each tx MPDU in the caller supplied tx sts */
         bool free_mpdu = TRUE;
@@ -9840,12 +9855,17 @@ free_and_next:
             succ_msdu += WLPKTTAG_AMSDU(p) ? amsdu_sf : 1;
             succ_mpdu++;
         }
+    /* dump_flag_qqdx */
         //ack_update_qq(txh_info->TxFrameID,was_acked,wlc->osh);
-        ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked,wlc->osh,p);
+        ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked\
+        ,wlc->osh,p, !first_pkt_flag_qqdx,tot_mpdu);
+        first_pkt_flag_qqdx = FALSE;
+        /*对于多包情况只需要第一次的时候从头开始，其他情况从上次开始*/
         #ifdef PROP_TXSTATUS
                     printk("----------[fyl] PROP_TXSTATUS----------");
 #endif
         //ack_update_qq(pkttag->seq,was_acked,wlc->osh);
+    /* dump_flag_qqdx */
 
 #endif /* WLSCB_HISTO */
 

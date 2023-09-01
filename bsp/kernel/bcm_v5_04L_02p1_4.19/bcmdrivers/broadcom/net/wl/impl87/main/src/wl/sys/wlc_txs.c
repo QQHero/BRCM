@@ -1180,7 +1180,7 @@ resume_txs:
 		}
 
 		if ((BSSCFG_AP(bsscfg) || BSSCFG_IBSS(bsscfg)) && PS_PRETEND_ENABLED(bsscfg)) {
-#ifdef BCMDBG
+#ifdef BCMDBG_PPS_qq
 			/* we are draining the fifo yet we received a tx status which isn't
 			 * suppress - this is an error we should trap if we are still in the
 			 * same ps pretend instance
